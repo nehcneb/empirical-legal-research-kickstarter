@@ -7,7 +7,7 @@ json
 pandas
 datetime
 time
-streamlit as st
+streamlit
 streamlit.components.v1
 nswcaselaw
 openai
