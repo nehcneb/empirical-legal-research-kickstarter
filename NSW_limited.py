@@ -182,7 +182,7 @@ def create_df():
            'Your name': name, 
            'Your email address': email, 
            'Your GPT API key': gpt_api_key, 
-           'New South Wales Courts to cover': courts, 
+           'New South Wales Courts to Cover': courts, 
            'Free text': body, 
            'Case name': title, 
            'Before' : before, 
@@ -620,7 +620,7 @@ def run(df_master):
     #Apply split and format functions for headnotes choice, court choice and GPT questions
      
     df_master['Information to Collect from Judgment Headnotes'] = df_master['Information to Collect from Judgment Headnotes'].apply(headnotes_choice)
-    df_master['New South Wales Courts to cover'] = df_master['New South Wales Courts to cover'].apply(court_choice)
+    df_master['New South Wales Courts to Cover'] = df_master['New South Wales Courts to Cover'].apply(court_choice)
     df_master['Enter your question(s) for GPT'] = df_master['Enter your question(s) for GPT'][0: answers_characters_bound].apply(split_by_line)
     df_master['questions_json'] = df_master['Enter your question(s) for GPT'].apply(GPT_label_dict)
     
@@ -646,7 +646,7 @@ def run(df_master):
     
     #Conduct search
     
-    query = Search(courts=df_master.loc[0, 'New South Wales Courts to cover'], 
+    query = Search(courts=df_master.loc[0, 'New South Wales Courts to Cover'], 
                    body = df_master.loc[0, "SearchCriteria"]['body'], 
                    title = df_master.loc[0, "SearchCriteria"]['title'], 
                    before = df_master.loc[0, "SearchCriteria"]['before'], 
@@ -778,7 +778,7 @@ def search_url(df_master):
     #Apply split and format functions for headnotes choice, court choice and GPT questions
      
     df_master['Information to Collect from Judgment Headnotes'] = df_master['Information to Collect from Judgment Headnotes'].apply(headnotes_choice)
-    df_master['New South Wales Courts to cover'] = df_master['New South Wales Courts to cover'].apply(court_choice)
+    df_master['New South Wales Courts to Cover'] = df_master['New South Wales Courts to Cover'].apply(court_choice)
     df_master['Enter your question(s) for GPT'] = df_master['Enter your question(s) for GPT'][0: answers_characters_bound].apply(split_by_line)
     df_master['questions_json'] = df_master['Enter your question(s) for GPT'].apply(GPT_label_dict)
     
@@ -804,7 +804,7 @@ def search_url(df_master):
     
     #Conduct search
     
-    query = Search(courts=df_master.loc[0, 'New South Wales Courts to cover'], 
+    query = Search(courts=df_master.loc[0, 'New South Wales Courts to Cover'], 
                    body = df_master.loc[0, "SearchCriteria"]['body'], 
                    title = df_master.loc[0, "SearchCriteria"]['title'], 
                    before = df_master.loc[0, "SearchCriteria"]['before'], 
@@ -873,10 +873,10 @@ The NSW pilot version can automatically
 
 For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/search/advanced. This section mimics their Advance Search function.
 """)
-    st.caption('During the pilot stage, the number of judgments to scrape is capped. Please reach out to Ben at ben.chen@sydney.edu.au should you wish to cover more judgments, courts, or tribunals.')
+    st.caption('During the pilot stage, the number of judgments to scrape is capped. Please reach out to Ben at ben.chen@sydney.edu.au should you wish to Cover more judgments, courts, or tribunals.')
 
 
-    st.subheader("New South Wales Courts to cover")
+    st.subheader("New South Wales Courts to Cover")
 
     courts_entry = st.multiselect('You must select at least one court', nsw_courts)
     
@@ -1039,7 +1039,7 @@ if run_button:
 
         #Upload placeholder record onto Google sheet
         df_plaeceholdeer = pd.concat([df_google, df_master])
-        conn.update(worksheet="Sheet1", data=df_plaeceholdeer, )
+        conn.update(worksheet="NSW", data=df_plaeceholdeer, )
 
 
         #Produce results
@@ -1054,7 +1054,7 @@ if run_button:
         
         df_to_update = pd.concat([df_google, df_master])
         
-        conn.update(worksheet="Sheet1", data=df_to_update, )
+        conn.update(worksheet="NSW", data=df_to_update, )
 
         st.write("Your results are now available for download. Thank you for using the Empirical Legal Research Kickstarter.")
         
@@ -1117,7 +1117,7 @@ if keep_button:
         
 #        df_to_update = pd.concat([df_google, df_master])
         
-#        conn.update(worksheet="Sheet1", data=df_to_update, )
+#        conn.update(worksheet="NSW", data=df_to_update, )
 
         #Produce a file to download
 
