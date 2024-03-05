@@ -19,6 +19,7 @@
 # %%
 #Preliminary modules
 import base64 
+import json
 import pandas as pd
 import shutil
 import requests
