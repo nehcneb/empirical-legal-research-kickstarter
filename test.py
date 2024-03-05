@@ -47,8 +47,6 @@ import tiktoken
 
 #Google
 from google.oauth2 import service_account
-from streamlit_gsheets import GSheetsConnection
-
 
 
 # %%
