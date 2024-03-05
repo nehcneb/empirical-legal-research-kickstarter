@@ -79,7 +79,7 @@ def convert_df_to_csv(df):
 st.set_page_config(
    page_title="Empirical Legal Research Kickstarter",
    page_icon="🧊",
-   layout="wide",
+   layout="centered",
    initial_sidebar_state="expanded",
 )
 
