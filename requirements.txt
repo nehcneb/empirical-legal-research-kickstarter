@@ -1,8 +1,7 @@
 altair
 numpy
 pandas
-pydeck
-base64 
+pydeck 
 shutil
 requests
 re
