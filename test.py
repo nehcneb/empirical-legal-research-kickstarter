@@ -915,7 +915,7 @@ For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/sear
 
     judgments_counter_bound_entry = judgments_counter_bound
 
-    st.markdown("""You can preview your search results on CaseLaw NSW after you have entered some search terms.
+    st.markdown("""You can preview your search results on CaseLaw NSW after you have selected a court and entered some search terms.
     """)
     
     preview_button = st.form_submit_button('Preview what you will find (in a popped up window)')
