@@ -21,36 +21,18 @@
 
 # %%
 #Preliminary modules
-#import os
-import pickle 
-#import os.path 
-import base64 
+
 import json
 import pandas as pd
-import shutil
-import requests
-from requests_html import HTMLSession
-import numpy as np
-from IPython.display import display
-import re
 import datetime
 from datetime import date
 from datetime import datetime
-from dateutil import parser
 from dateutil.relativedelta import *
-from datetime import datetime, timedelta
+from datetime import datetime
 import time
-import sys
-import html2text
-import openpyxl
-import xlsxwriter
-from openpyxl import load_workbook
-from io import BytesIO
-from pyxlsb import open_workbook as open_xlsb
 
 #Streamlit
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
 from streamlit.components.v1 import html
 
 #NSWCaseLaw
