@@ -44,7 +44,7 @@ import streamlit_ext as ste
 from nswcaselaw.search import Search
 
 #OpenAI
-from openai import OpenAI
+import openai
 import tiktoken
 
 #Google
