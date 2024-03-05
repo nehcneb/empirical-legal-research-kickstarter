@@ -31,7 +31,6 @@ from dateutil import parser
 from dateutil.relativedelta import *
 from datetime import datetime, timedelta
 import sys
-import html2text
 import openpyxl
 import xlsxwriter
 from openpyxl import load_workbook
