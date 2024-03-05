@@ -499,12 +499,15 @@ def GPT_json_tokens(questions_json, judgment_json, API_key):
 #   return messages_for_GPT
 
             
-    os.environ["OPENAI_API_KEY"] = API_key
+    # os.environ["OPENAI_API_KEY"] = API_key
+
+    openai.api_key = API_key
     
-    client = OpenAI()
+    #client = OpenAI()
     
     try:
-        completion = client.chat.completions.create(
+        #completion = client.chat.completions.create(
+        completion = openai.chat.completions.create(
             model=GPT_model,
             messages=messages_for_GPT, 
             response_format={"type": "json_object"}
@@ -542,9 +545,11 @@ def engage_GPT_json_tokens(questions_json, df_individual, GPT_activation, API_ke
         # 'GPT time estimate (seconds)'
         # GPT questions/answers
 
-    os.environ["OPENAI_API_KEY"] = API_key
+    #os.environ["OPENAI_API_KEY"] = API_key
+
+    openai.api_key = API_key
     
-    client = OpenAI()
+    #client = OpenAI()
     
     question_keys = [*questions_json]
     
