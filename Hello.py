@@ -9,7 +9,7 @@
 #       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
-#     language: python
+#     language: pythonf
 #     name: python3
 # ---
 
@@ -43,7 +43,7 @@ import tiktoken
 
 # %%
 #Get current directory
-current_dir = os.getcwd()
+#current_dir = os.getcwd()
 
 # %%
 #today
