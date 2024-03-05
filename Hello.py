@@ -18,11 +18,7 @@
 
 # %%
 #Preliminary modules
-import os
-import pickle 
-import os.path 
 import base64 
-import json
 import pandas as pd
 import shutil
 import requests
@@ -36,7 +32,6 @@ from datetime import datetime
 from dateutil import parser
 from dateutil.relativedelta import *
 from datetime import datetime, timedelta
-import time
 import sys
 import html2text
 import openpyxl
@@ -51,7 +46,6 @@ from streamlit_gsheets import GSheetsConnection
 from streamlit.components.v1 import html
 import streamlit_ext as ste
 
-
 #NSWCaseLaw
 from nswcaselaw.search import Search
 
@@ -62,7 +56,6 @@ import tiktoken
 #Google
 from google.oauth2 import service_account
 from streamlit_gsheets import GSheetsConnection
-
 
 
 # %%
