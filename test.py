@@ -23,7 +23,6 @@ import pandas as pd
 import shutil
 import requests
 import numpy as np
-from IPython.display import display
 import re
 import datetime
 from datetime import date
@@ -36,7 +35,6 @@ import html2text
 import openpyxl
 import xlsxwriter
 from openpyxl import load_workbook
-from io import BytesIO
 from pyxlsb import open_workbook as open_xlsb
 
 #Streamlit
