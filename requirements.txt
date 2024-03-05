@@ -6,7 +6,8 @@ pandas
 datetime
 streamlit
 st-gsheets-connection
-#streamlit_gsheets
+streamlit-gsheets
+streamlit-ext
 nswcaselaw
 openai
 tiktoken
