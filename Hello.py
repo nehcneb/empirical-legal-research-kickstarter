@@ -13,38 +13,28 @@
 #     name: python3
 # ---
 
+# %% [markdown]
+# # Preliminaries
+
 # %%
-#streamlit run /Users/Ben/Library/CloudStorage/Dropbox/Python/OpenAI/GPT_self_contained/GPT_Streamlit_Google_Limited.py
+#streamlit run /Users/Ben/Library/CloudStorage/Dropbox/Python/OpenAI/GPT_self_contained/GPT_Streamlit_Limited.py
 
 # %%
 #Preliminary modules
-import base64 
+import os
+import os.path 
+import json
 import pandas as pd
-import shutil
-import requests
-from requests_html import HTMLSession
-import numpy as np
-from IPython.display import display
-import re
 import datetime
 from datetime import date
 from datetime import datetime
-from dateutil import parser
 from dateutil.relativedelta import *
-from datetime import datetime, timedelta
-import sys
-import html2text
-import openpyxl
-import xlsxwriter
-from openpyxl import load_workbook
-from io import BytesIO
-from pyxlsb import open_workbook as open_xlsb
+from datetime import datetime
+import time
 
 #Streamlit
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
 from streamlit.components.v1 import html
-import streamlit_ext as ste
 
 #NSWCaseLaw
 from nswcaselaw.search import Search
@@ -53,9 +43,6 @@ from nswcaselaw.search import Search
 from openai import OpenAI
 import tiktoken
 
-#Google
-from google.oauth2 import service_account
-from streamlit_gsheets import GSheetsConnection
 
 
 # %%
@@ -78,25 +65,12 @@ errors_list = set()
 
 
 # %%
-#Create function for saving responses and results
+#Create function for saving responses
 def convert_df_to_json(df):
     return df.to_json(orient = 'split', compression = 'infer')
 
 def convert_df_to_csv(df):
    return df.to_csv(index=False).encode('utf-8')
-
-def convert_df_to_excel(df):
-    output = BytesIO()
-    writer = pd.ExcelWriter(output, engine='xlsxwriter')
-    df.to_excel(writer, index=False, sheet_name='Sheet1')
-    workbook = writer.book
-    worksheet = writer.sheets['Sheet1']
-    format1 = workbook.add_format({'num_format': '0.00'}) 
-    worksheet.set_column('A:A', None, format1)  
-    writer.save()
-    processed_data = output.getvalue()
-    return processed_data
-
 
 
 # %% [markdown]
@@ -135,6 +109,9 @@ def create_df():
     email = email_entry
     gpt_api_key = gpt_api_key_entry
 
+    #Get API key from own secrets file
+    
+    
     #NSW court choices
     
     courts_list = courts_entry
@@ -179,7 +156,7 @@ def create_df():
     #Judgment counter bound
     
     judgments_counter_bound_ticked = judgments_counter_bound_entry
-    if int(judgments_counter_bound_ticked) > 0:
+    if judgments_counter_bound_ticked > 0:
         judgments_counter_bound = 10
     else:
         judgments_counter_bound = 10000
@@ -191,7 +168,7 @@ def create_df():
 
     #GPT choice and entry
     gpt_activation_status = gpt_activation_entry
-    gpt_questions = gpt_questions_entry[0: 1000]
+    gpt_questions = gpt_questions_entry
 
     new_row = {'Processed': '',
            'Timestamp': timestamp,
@@ -211,7 +188,7 @@ def create_df():
            'Legislation cited': legislationCited,
            'Cases cited': casesCited, 
            'Information to Collect from Judgment Headnotes': headnotes,
-           'Maximum number of judgments': judgments_counter_bound, 
+           'Jugdments counter bound': judgments_counter_bound, 
            'Enter your question(s) for GPT': gpt_questions, 
             'Tick to use GPT': gpt_activation_status 
           }
@@ -325,6 +302,105 @@ def mnc_cleaner(x):
 
 
 
+# %%
+#function to remove unnecessary columns
+
+def remove_unwanted_columns(df_master, df_individual):
+
+    #Reorganise columns
+
+    old_columns = list(df_individual.columns)
+    
+    for i in ['Case name', 'Medium neutral citation', 'Hyperlink']:
+        if i in old_columns:
+            old_columns.remove(i)
+    
+    new_columns = ['Case name', 'Medium neutral citation', 'Hyperlink'] + old_columns
+    
+    df_individual = df_individual.reindex(columns=new_columns)
+
+    #State user unwanted columns
+    headnotes_exclude = []
+    
+    for x in headnotes_fields:
+        if ((x not in df_master.loc[0, "Information to Collect from Judgment Headnotes"]) &( x not in ['Case name', 'Medium neutral citation', 'Hyperlink'])):
+            headnotes_exclude.append(x)
+
+    #Remove unwanted columns
+    for y in headnotes_exclude:
+        if y in df_individual.columns:
+                df_individual.pop(y)
+
+    #Remove judgment and uri columns
+    try:
+        df_individual.pop("judgment")
+        df_individual.pop("uri")
+        
+    except:
+        pass
+        
+    #Remove blank decisions under appeal cells
+    
+    try:
+        for j in df_individual.index:
+            if df_individual.loc[j, "Decision under appeal"] == {'Court or tribunal': [], 'Jurisdiction': [], 'Citation': [], 'Date of Decision': [], 'Before': [], 'File Number(s)': []}:
+                df_individual.loc[j, "Decision under appeal"] = ''
+    except:
+        pass
+
+    return df_individual
+
+
+# %%
+def search_url(df_master):
+    df_master = df_master.fillna('')
+    
+    #Apply split and format functions for headnotes choice, court choice and GPT questions
+     
+    df_master['Information to Collect from Judgment Headnotes'] = df_master['Information to Collect from Judgment Headnotes'].apply(headnotes_choice)
+    df_master['New South Wales Courts to cover'] = df_master['New South Wales Courts to cover'].apply(court_choice)
+    df_master['Enter your question(s) for GPT'] = df_master['Enter your question(s) for GPT'][0: answers_characters_bound].apply(split_by_line)
+    df_master['questions_json'] = df_master['Enter your question(s) for GPT'].apply(GPT_label_dict)
+    
+    #Combining catchwords into new column
+    
+    search_dict = {'body': df_master.loc[0, 'Free text']}
+    search_dict.update({'title': df_master.loc[0, 'Case name']})
+    search_dict.update({'before': df_master.loc[0, 'Before']})
+    search_dict.update({'catchwords': df_master.loc[0, 'Catchwords']})
+    search_dict.update({'party': df_master.loc[0, 'Party names']})
+    search_dict.update({'mnc': df_master.loc[0, 'Medium neutral citation']})
+    search_dict.update({'startDate': df_master.loc[0, 'Decision date from']})
+    search_dict.update({'endDate': df_master.loc[0, 'Decision date to']})
+    search_dict.update({'fileNumber': df_master.loc[0, 'File number']})
+    search_dict.update({'legislationCited': df_master.loc[0, 'Legislation cited']})
+    search_dict.update({'casesCited': df_master.loc[0, 'Cases cited']})
+    df_master.loc[0, 'SearchCriteria']=[search_dict]
+    
+    #Do search
+    
+    #Create judgments file
+    judgments_file = []
+    
+    #Conduct search
+    
+    query = Search(courts=df_master.loc[0, 'New South Wales Courts to cover'], 
+                   body = df_master.loc[0, "SearchCriteria"]['body'], 
+                   title = df_master.loc[0, "SearchCriteria"]['title'], 
+                   before = df_master.loc[0, "SearchCriteria"]['before'], 
+                   catchwords = df_master.loc[0, "SearchCriteria"]['catchwords'], 
+                   party = df_master.loc[0, "SearchCriteria"]['party'], 
+                   mnc = df_master.loc[0, "SearchCriteria"]['mnc'], 
+                   startDate = date(df_master.loc[0, "SearchCriteria"]['startDate']), 
+                   endDate = date(df_master.loc[0, "SearchCriteria"]['endDate']),
+                   fileNumber = df_master.loc[0, "SearchCriteria"]['fileNumber'], 
+                   legislationCited  = df_master.loc[0, "SearchCriteria"]['legislationCited'], 
+                   casesCited = df_master.loc[0, "SearchCriteria"]['legislationCited'],
+                   pause = scraper_pause
+                  )
+    return query.url
+
+
 # %% [markdown]
 # # GPT functions and parameters
 
@@ -336,71 +412,13 @@ GPT_model = "gpt-3.5-turbo-0125"
 GPT_input_cost = 1/1000*0.0005 
 GPT_output_cost = 1/1000*0.0015
 
-#Upperbound on number of engagements with GPT
-
-GPT_use_bound = 3
-
-print(f"\nPrior number of GPT uses is capped at {GPT_use_bound} times.")
-
-#Upperbound on the length of questions for GPT
+#Decide whether to process my own responeses only
 
 answers_characters_bound = 1000
-
-print(f"\nQuestions for GPT are capped at {answers_characters_bound} characters.")
-
-#Upperbound on number of judgments to scrape
-
-judgments_counter_bound = 10
-
-print(f"\nNumber of judgments to scrape per request is capped at {judgments_counter_bound}.")
 
 #Pause between judgment scraping
 
 scraper_pause = 5
-
-print(f"\nThe pause between judgment scraping is {scraper_pause} second.")
-
-
-
-# %%
-#Define function to determine eligibility for GPT use
-
-#Define a list of privileged email addresses with unlimited GPT uses
-
-privileged_emails = ['ben.chen@sydney.edu.au', 
-                     'nehc.neb@gmail.com', 
-                     'natalie.silver@sydney.edu.au', 
-                     'kimberlee.weatherall@sydney.edu.au',
-                     'jeffrey.gordon@sydney.edu.au', 
-                     'michael.j.crawford@sydney.edu.au'
-                     'genevieve.grant@monash.edu', 
-                     'genevieve.grant@monash.edu.au', 
-                     'm.legg@unsw.edu.au'
-                    ]
-
-def prior_GPT_uses(email_address, df_online):
-    # df_online variable should be the online df_online
-    prior_use_counter = 0
-    for i in df_online.index:
-        if ((df_online.loc[i, "Your email address"] == email_address) 
-            and (int(df_online.loc[i, "Tick to use GPT"]) > 0) 
-            and (len(df_online.loc[i, "Processed"])>0)
-           ):
-            prior_use_counter += 1
-    if email_address in privileged_emails:
-        return 0
-    else:
-        return prior_use_counter
-
-#Define function to check whether email is educational or government
-def check_edu_gov(email_address):
-    #Return 1 if educational or government, return 0 otherwise
-    end=email_address.split('@')[1]
-    if (('.gov' in end) or ('.edu' in end) or ('.ac' in end)):
-        return 1
-    else:
-        return 0
-
 
 
 # %%
@@ -572,10 +590,10 @@ def engage_GPT_json_tokens(questions_json, df_individual, GPT_activation, API_ke
             answers_dict = {}    
             for q_index in question_keys:
                 #Increases judgment index by 2 to ensure consistency with Excel spreadsheet
-                answer = 'Placeholder answer for ' + ' judgment ' + str(int(judgment_index) + 2) + ' ' + str(q_index)
+                answer = 'Test answer r ' + ' j ' + str(int(judgment_index) + 2) + ' ' + str(q_index)
                 answers_dict.update({q_index: answer})
             
-            #Own calculation of GPT costs for Placeholder answer fors
+            #Own calculation of GPT costs for test answers
 
             #Calculate capped judgment tokens
 
@@ -621,6 +639,9 @@ def engage_GPT_json_tokens(questions_json, df_individual, GPT_activation, API_ke
     return df_individual
 
 
+
+# %% [markdown]
+# # Combined function
 
 # %%
 #Obtain parameters
@@ -677,7 +698,7 @@ def run(df_master):
     
     #Go through search results
     
-    judgments_counter_bound = int(df_master.loc[0, 'Maximum number of judgments'])
+    judgments_counter_bound = int(df_master.loc[0, "Jugdments counter bound"])
     
     for decision in query.results():
         if counter < judgments_counter_bound:
@@ -703,7 +724,7 @@ def run(df_master):
     #Rename column titles
     
     try:
-        df_individual['Hyperlink (double click)'] = df_individual['uri'].apply(link)
+        df_individual['Hyperlink'] = df_individual['uri'].apply(link)
         df_individual.pop('uri')
     except:
         pass
@@ -733,105 +754,6 @@ def run(df_master):
     return df_updated
 
 
-# %%
-#function to remove unnecessary columns
-
-def remove_unwanted_columns(df_master, df_individual):
-
-    #Reorganise columns
-
-    old_columns = list(df_individual.columns)
-    
-    for i in ['Case name', 'Medium neutral citation', 'Hyperlink (double click)']:
-        if i in old_columns:
-            old_columns.remove(i)
-    
-    new_columns = ['Case name', 'Medium neutral citation', 'Hyperlink (double click)'] + old_columns
-    
-    df_individual = df_individual.reindex(columns=new_columns)
-
-    #State user unwanted columns
-    headnotes_exclude = []
-    
-    for x in headnotes_fields:
-        if ((x not in df_master.loc[0, "Information to Collect from Judgment Headnotes"]) &( x not in ['Case name', 'Medium neutral citation', 'Hyperlink (double click)'])):
-            headnotes_exclude.append(x)
-
-    #Remove unwanted columns
-    for y in headnotes_exclude:
-        if y in df_individual.columns:
-                df_individual.pop(y)
-
-    #Remove judgment and uri columns
-    try:
-        df_individual.pop("judgment")
-        df_individual.pop("uri")
-        
-    except:
-        pass
-        
-    #Remove blank decisions under appeal cells
-    
-    try:
-        for j in df_individual.index:
-            if df_individual.loc[j, "Decision under appeal"] == {'Court or tribunal': [], 'Jurisdiction': [], 'Citation': [], 'Date of Decision': [], 'Before': [], 'File Number(s)': []}:
-                df_individual.loc[j, "Decision under appeal"] = ''
-    except:
-        pass
-
-    return df_individual
-
-
-# %%
-def search_url(df_master):
-    df_master = df_master.fillna('')
-    
-    #Apply split and format functions for headnotes choice, court choice and GPT questions
-     
-    df_master['Information to Collect from Judgment Headnotes'] = df_master['Information to Collect from Judgment Headnotes'].apply(headnotes_choice)
-    df_master['New South Wales Courts to cover'] = df_master['New South Wales Courts to cover'].apply(court_choice)
-    df_master['Enter your question(s) for GPT'] = df_master['Enter your question(s) for GPT'][0: answers_characters_bound].apply(split_by_line)
-    df_master['questions_json'] = df_master['Enter your question(s) for GPT'].apply(GPT_label_dict)
-    
-    #Combining catchwords into new column
-    
-    search_dict = {'body': df_master.loc[0, 'Free text']}
-    search_dict.update({'title': df_master.loc[0, 'Case name']})
-    search_dict.update({'before': df_master.loc[0, 'Before']})
-    search_dict.update({'catchwords': df_master.loc[0, 'Catchwords']})
-    search_dict.update({'party': df_master.loc[0, 'Party names']})
-    search_dict.update({'mnc': df_master.loc[0, 'Medium neutral citation']})
-    search_dict.update({'startDate': df_master.loc[0, 'Decision date from']})
-    search_dict.update({'endDate': df_master.loc[0, 'Decision date to']})
-    search_dict.update({'fileNumber': df_master.loc[0, 'File number']})
-    search_dict.update({'legislationCited': df_master.loc[0, 'Legislation cited']})
-    search_dict.update({'casesCited': df_master.loc[0, 'Cases cited']})
-    df_master.loc[0, 'SearchCriteria']=[search_dict]
-    
-    #Do search
-    
-    #Create judgments file
-    judgments_file = []
-    
-    #Conduct search
-    
-    query = Search(courts=df_master.loc[0, 'New South Wales Courts to cover'], 
-                   body = df_master.loc[0, "SearchCriteria"]['body'], 
-                   title = df_master.loc[0, "SearchCriteria"]['title'], 
-                   before = df_master.loc[0, "SearchCriteria"]['before'], 
-                   catchwords = df_master.loc[0, "SearchCriteria"]['catchwords'], 
-                   party = df_master.loc[0, "SearchCriteria"]['party'], 
-                   mnc = df_master.loc[0, "SearchCriteria"]['mnc'], 
-                   startDate = date(df_master.loc[0, "SearchCriteria"]['startDate']), 
-                   endDate = date(df_master.loc[0, "SearchCriteria"]['endDate']),
-                   fileNumber = df_master.loc[0, "SearchCriteria"]['fileNumber'], 
-                   legislationCited  = df_master.loc[0, "SearchCriteria"]['legislationCited'], 
-                   casesCited = df_master.loc[0, "SearchCriteria"]['legislationCited'],
-                   pause = scraper_pause
-                  )
-    return query.url
-
-
 # %% [markdown]
 # # Streamlit form, functions and parameters
 
@@ -852,7 +774,6 @@ def open_page(url):
 with st.form("GPT_input_form") as df_responses:
     st.title("Empirical Legal Research Kickstarter")
     st.header("A New South Wales Pilot")
-    
     st.markdown("""The Empirical Legal Research Kickstarter is a computer program designed to help kickstart empirical research involving judgments. It automates many costly, time-consuming and mundane tasks in empirical research.
 
 The NSW pilot version can automatically
@@ -863,55 +784,55 @@ The NSW pilot version can automatically
 
 (3) use GPT — a generative AI — as a research assistant to answer your questions about each judgment.
 
-**Complete this form to kickstart your project!**
+**Complete this form to kickstart your empirical project.**
+
+:grey[The Empirical Legal Research Kickstarter is the joint effort of Mike Lynch and Xinwei Luo of Sydney Informatics Hub and Ben Chen of Sydney Law School. It is partially funded by a University of Sydney Research Accelerator (SOAR) Prize awarded to Ben in 2022. Please send any enquiries to Ben (the developer) at ben.chen@sydney.edu.au.]
 """)
-    st.caption('The Empirical Legal Research Kickstarter is the joint effort of Mike Lynch and Xinwei Luo of Sydney Informatics Hub and Ben Chen of Sydney Law School. It is partially funded by a University of Sydney Research Accelerator (SOAR) Prize awarded to Ben in 2022. Please send any enquiries to Ben at ben.chen@sydney.edu.au.')
 
     st.header("Your information")
-#    st.markdown("""You must enter an API key if you wish to use GPT to analyse more than 10 judgments. 
+#    st.markdown("""You must enter an API key if you wish to use GPT. 
 #To obtain an API key, first sign up for an account with OpenAI at 
 #https://platform.openai.com/signup. You can then find your API key at https://platform.openai.com/api-keys.
 #""")
     name_entry = st.text_input("Your name")
     email_entry = st.text_input("Your email address")
-#    gpt_api_key_entry = st.text_input("Your GPT API key")
+ #   gpt_api_key_entry = st.text_input("Your GPT API key")
 
     #Search terms
 
     st.header("Judgment Search Criteria")
     
-    st.markdown("""This program will collect (ie scrape) the first 10 judgments satisfying your search terms.
+    st.markdown("""Your search terms will identify the judgments to be collected and coded.
+
+Pre-1999 decisions are usually not available at CaseLaw NSW and will unlikely to be collected.
 
 For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/search/advanced. This section mimics their Advance Search function.
-""")
-    st.caption('During the pilot stage, the number of judgments to scrape is capped. Please reach out to Ben at ben.chen@sydney.edu.au should you wish to cover more judgments, courts, or tribunals.')
-
+    """)
 
     st.subheader("New South Wales Courts to cover")
 
     courts_entry = st.multiselect('You must select at least one court', nsw_courts)
     
     st.subheader("Your Search Terms")
+
+    st.markdown("""*This pilot program will collect (ie scrape) the first 10 judgments satisfying your search criteria.*
     
+Please reach out to Ben at ben.chen@sydney.edu.au should you wish to cover more judgments, courts, or tribunals.
+""")
+
     body_entry = st.text_input("Free text (searches the entire judgment)") 
     
     title_entry = st.text_input("Case name")
     
-    before_entry = st.text_input("Before")
-
-    st.caption("Name of judge, commissioner, magistrate, member, registrar or assessor")
+    before_entry = st.text_input("Before (name of judge")
     
     catchwords_entry = st.text_input("Catchwords")
     
     party_entry = st.text_input("Party names")
     
-    mnc_entry = st.text_input("Medium neutral citation")
-
-    st.caption("Must include square brackets eg [2022] NSWSC 922")
+    mnc_entry = st.text_input("Medium neutral citation (must include square brackets eg [2022] NSWSC 922)")
     
     startDate_entry = st.date_input("Decision date from (01/01/1999 the earliest)", value = None, format="DD/MM/YYYY")
-
-    st.caption("Pre-1999 decisions are usually not available at CaseLaw NSW and will unlikely to be collected (see https://www.caselaw.nsw.gov.au/about).")
     
     endDate_entry = st.date_input("Decision date to", value = None,  format="DD/MM/YYYY")
     
@@ -920,41 +841,36 @@ For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/sear
     legislationCited_entry = st.text_input("Legislation cited")
     
     casesCited_entry = st.text_input("Cases cited")
-
-    #Cap number of judgments
+        
 #    judgments_counter_bound_entry = st.checkbox('Untick to collect potentially more than 10 judgments', value = True)
 
-    judgments_counter_bound_entry = judgments_counter_bound
+    judgments_counter_bound_entry = 10
 
     st.markdown("""You can preview your search results on CaseLaw NSW after you have entered some search terms.
     """)
     
-    preview_button = st.form_submit_button('Preview what you will find (in a popped up window)')
+    preview_button = st.form_submit_button('Click to preview what you will find (in a popped up window)')
 
-    
-    st.subheader("Information to Collect from Judgment Headnotes")
+    st.header("Information to Collect from Judgment Headnotes")
     
     st.markdown("""Please select what information from judgment headnotes you would like to obtain.
 Case name, link to CaseLaw NSW, and medium neutral citation are always included.
 """)
-    st.caption('The code used to extract judgment headnotes is available at https://github.com/Sydney-Informatics-Hub/nswcaselaw. Such extraction does not require engagement with GPT.')
-
     
     headnotes_entry = st.multiselect("Please select", headnotes_choices)
 
+    st.markdown(""":grey[The code used to extract judgment headnotes is available at https://github.com/Sydney-Informatics-Hub/nswcaselaw. Such extraction does not require engagement with GPT. ]
+""")
     
-    st.header("Use GPT as Your Research Assistant")
+    st.header("Questions for GPT")
 
-    st.markdown("**You have three (3) opportunities to engage with GPT through the Empirical Legal Research Kickstarter. Would you like to use one (1) of these opportunities now?**")
+    st.markdown("""*Please consider trying the Empirical Legal Research Kickstarter without asking GPT any questions first.* You can, for instance, obtain the judgments satisfying your search criteria and extract information from the judgment headnotes without using GPT.
 
-    gpt_activation_entry = st.checkbox('Tick to use GPT', value = False)
-
-    st.caption("Released by OpenAI, GPT is a family of large language models (ie a generative AI that works on language). Answers to your questions will be generated by model gpt-3.5-turbo-0125. Due to a technical limitation, the model will be instructed to 'read' up to approximately 11,726 words from each judgment.")
-
-    st.markdown("""Please consider trying the Empirical Legal Research Kickstarter without asking GPT any questions first. You can, for instance, obtain the judgments satisfying your search criteria and extract information from the judgment headnotes without using GPT.
+Engagement with GPT is costly and funded by a grant.  Ben's own experience suggests that it costs approximately USD \$0.003-\$0.008 (excl GST) per judgment. The exact cost for answering a question about a judgment depends on the length of the question, the length of the judgment, and the length of the answer produced (as elaborated at https://openai.com/pricing for model gpt-3.5-turbo-0125).
+You will be given ex-post cost estimates if you choose to use GPT now.
 """)
 
-    st.caption("Engagement with GPT is costly and funded by a grant.  Ben's own experience suggests that it costs approximately USD \$0.003-\$0.008 (excl GST) per judgment. The exact cost for answering a question about a judgment depends on the length of the question, the length of the judgment, and the length of the answer produced (as elaborated at https://openai.com/pricing for model gpt-3.5-turbo-0125). You will be given ex-post cost estimates.")
+    gpt_activation_entry = st.checkbox('Tick to use GPT', value = False)
 
     st.subheader("Enter your question(s) for GPT")
     
@@ -969,7 +885,7 @@ You may enter at most 1000 characters here.
 
     st.header("Consent")
 
-    st.markdown("""By submitting this form, you agree that the data and/or information this form provides will be temporarily stored on one or more of Ben Chen's electronic devices and/or one or more remote servers for the purpose of producing an output containing data in relation to judgments. Any such data and/or information may also be given to GPT for the same purpose should you choose to use GPT.
+    st.markdown("""By submitting this form, you agree that the data and/or information this form provides will be temporarily stored one one or more remote servers for the purpose of producing an output containing data in relation to judgments and sending such output to your nominated email address. Any such data and/or information may also be given to GPT for the same purpose should you choose to use GPT. You will be given a record of any such data and/or information so stored and/or given to GPT.
 
 If you do not agree, then please feel free to close this form. Any data or information this form provides will neither be received by Ben Chen nor be sent to GPT.
 """)
@@ -978,17 +894,15 @@ If you do not agree, then please feel free to close this form. Any data or infor
 
     st.header("Next steps")
 
-    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time to get your results is 10-20 seconds per judgment.
+    st.markdown("""You can now :green[run the Empirical Legal Research Kickstarter]. The estimated running time is 10-20 seconds per judgment.
 
-You can also download a record of your responeses.
+You are encouraged to :blue[download a record of your responeses]. To protect your privacy, Ben (the developer) does not keep a record of your responses or results.
     
 """)
+    
+    run_button = st.form_submit_button('Run the Empirical Legal Research Kickstarter')
 
-    run_button = st.form_submit_button('SUBMIT this form')
-
-    keep_button = st.form_submit_button('DOWNLOAD your responses')
-
-
+    keep_button = st.form_submit_button('Download your responses')
 
 
 # %% [markdown]
@@ -996,6 +910,8 @@ You can also download a record of your responeses.
 
 # %%
 if preview_button:
+
+    #Using own GPT API key here
 
     gpt_api_key_entry = ''
 
@@ -1005,103 +921,53 @@ if preview_button:
 
     open_page(judgments_url)
 
-
+#    st.write(judgments_url)
+    
 
 # %%
 if run_button:
 
-    #Using own GPT
-
-    gpt_api_key_entry = st.secrets["openai"]["gpt_api_key"]
-
-    #Create spreadsheet of responses
-    df_master = create_df()
-
-    #Obtain google spreadsheet
-
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    google_record_url = "https://docs.google.com/spreadsheets/d/1298kSJ5l8oZGVhjQIFlMQS-Out7i0AWfp5qy1dpWLpU/edit#gid=0"
-    df_google = conn.read(spreadsheet=google_record_url)
-    df_google = df_google.fillna('')
-    df_google=df_google[df_google["Processed"]!='']
-
-
     if int(consent) == 0:
         st.write("You must click on 'Yes, I agree.' to run the Empirical Legal Research Kickstarter.")
 
-    elif (('@' not in df_master.loc[0, 'Your email address']) & (int(df_master.loc[0]["Tick to use GPT"]) > 0)):
-        st.write('You must enter a valid email address to use GPT')
-
-    elif ((int(df_master.loc[0]["Tick to use GPT"]) > 0) & (prior_GPT_uses(df_master.loc[0, "Your email address"], df_google) >= GPT_use_bound)):
-        st.write('At this pilot stage, each user may use GPT at most 3 times. Please feel free to email Ben at ben.chen@gsydney.edu.edu if you would like to use GPT again.')
-    
-    elif ((int(df_master.loc[0]["Tick to use GPT"]) > 0) & (len(df_master.loc[0]["Your GPT API key"]) < 20)):
-        st.write("You must enter a valid API key for GPT.")
-
-    elif len(courts_entry) == 0:
-        st.write('Please select at least one court.')
-
-    elif search_terms_str(df_master) == 'NoneNone':
-        st.write('Please enter at least one search term.')
-
     else:
 
-        st.write("Your results will be available for download soon. The estimated waiting time is about 2-3 minutes.")
+        #Using own GPT 
 
-        #Upload placeholder record onto Google sheet
-        df_plaeceholdeer = pd.concat([df_google, df_master])
-        conn.update(worksheet="Sheet1", data=df_plaeceholdeer, )
+        gpt_api_key_entry = st.secrets["openai"]["gpt_api_key"]
 
+        df_master = create_df()
 
-        #Produce results
+        if ((int(df_master.loc[0]["Tick to use GPT"]) > 0) & (len(df_master.loc[0]["Your GPT API key"]) < 20)):
+            st.write("You must enter a valid API key for GPT.")
 
-        df_individual = run(df_master)
-
-        df_individual_output = remove_unwanted_columns(df_master, df_individual)
-
-        #Keep record on Google sheet
+        else:            
+            
+            if len(courts_entry) == 0:
+                st.write('Please select at least one court.')
         
-        df_master["Processed"] = datetime.now()
+            if search_terms_str(df_master) == 'NoneNone':
+                st.write('Please enter at least one search term.')
         
-        df_to_update = pd.concat([df_google, df_master])
+            if ((len(courts_entry) > 0) & (search_terms_str(df_master) != 'NoneNone')):
+
+                st.write("Great. A button for downloading your results will appear soon. The estimated running time is 10-20 seconds per judgment.")
+
+                df_individual = run(df_master)
         
-        conn.update(worksheet="Sheet1", data=df_to_update, )
-
-        st.write("Your results are now available for download. Thank you for using the Empirical Legal Research Kickstarter.")
+                df_individual_output = remove_unwanted_columns(df_master, df_individual)
         
-        #Button for downloading results
-        output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + 'results'
-
-
-        excel_output = convert_df_to_excel(df_individual_output)
-
-        ste.download_button(
-            label="Download your results as Excel", 
-            data = excel_output,
-            file_name= output_name + '.xlsx', 
-        )
-
-        csv_output = convert_df_to_csv(df_individual_output)
+                output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + 'results.csv'
         
-        ste.download_button(
-            label="Download your results as CSV", 
-            data = csv_output,
-            file_name= output_name + '.csv', 
-            mime= "text/csv", 
-#            key='download-csv'
-        )
-
-        json_output = convert_df_to_json(df_individual_output)
-        
-        ste.download_button(
-            label="Download your results as JSON", 
-            data = json_output,
-            file_name= output_name + '.json', 
-            mime= "application/json", 
-        )
-
-
-
+                csv_output = convert_df_to_csv(df_individual_output)
+                
+                st.download_button(
+                    label="Download your results as CSV", 
+                    data = csv_output,
+                    file_name= output_name, 
+                    mime= "text/csv", 
+                    key='download-csv'
+                )
 
 
 # %%
@@ -1112,58 +978,23 @@ if keep_button:
     gpt_api_key_entry = ''
     
     df_master = create_df()
-
-    df_master.pop("Your GPT API key")
     
     if len(courts_entry) == 0:
         st.write('Please select at least one court.')
 
-    elif search_terms_str(df_master) == 'NoneNone':
+    if search_terms_str(df_master) == 'NoneNone':
         st.write('Please enter at least one search term.')
 
-    else:
+    if ((len(courts_entry) > 0) & (search_terms_str(df_master) != 'NoneNone')):
 
-        responses_output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + '_responses'
-
-#        st.write("A button for downloading your responses will appear very soon.")
-       
-        #Keep record on Google sheet
-#        conn = st.connection("gsheets", type=GSheetsConnection)
-#        google_record_url = "https://docs.google.com/spreadsheets/d/1298kSJ5l8oZGVhjQIFlMQS-Out7i0AWfp5qy1dpWLpU/edit#gid=0"
-#        df_google = conn.read(spreadsheet=google_record_url)
-#        df_google = df_google.fillna('')
-#        df_google=df_google[df_google["Processed"]!='']
-        
-#        df_to_update = pd.concat([df_google, df_master])
-        
-#        conn.update(worksheet="Sheet1", data=df_to_update, )
-
-        #Produce a file to download
-
-        excel = convert_df_to_excel(df_master)
-
-        ste.download_button(
-            label="Download as an Excel file", 
-            data = excel,
-            file_name= responses_output_name + '.xlsx', 
-        )
+        responses_output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + '_responses.csv'
 
         csv = convert_df_to_csv(df_master)
-        
-        ste.download_button(
-            label="Download as a CSV", 
+         
+        st.download_button(
+            label="Download your responses as CSV", 
             data = csv,
-            file_name=responses_output_name + '.csv', 
+            file_name=responses_output_name, 
             mime= "text/csv", 
-#            key='download-csv'
+            key='download-csv'
         )
-
-        json = convert_df_to_json(df_master)
-        
-        ste.download_button(
-            label="Download as a JSON", 
-            data = json,
-            file_name= responses_output_name + '.json', 
-            mime= "application/json", 
-        )
-
