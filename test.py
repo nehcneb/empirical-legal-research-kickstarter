@@ -52,10 +52,6 @@ from streamlit_gsheets import GSheetsConnection
 
 
 # %%
-#Get current directory
-current_dir = os.getcwd()
-
-# %%
 #today
 day = datetime.now().strftime("%-d")
 month = datetime.now().strftime("%B")
