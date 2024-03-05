@@ -9,6 +9,6 @@ datetime
 time
 streamlit as st
 streamlit.components.v1
-nswcaselaw.search import Search
-openai import OpenAI
+nswcaselaw
+openai
 tiktoken
