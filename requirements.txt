@@ -5,6 +5,7 @@ pydeck
 pandas
 datetime
 streamlit
+st-gsheets-connection
 nswcaselaw
 openai
 tiktoken
