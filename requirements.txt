@@ -6,7 +6,7 @@ pandas
 datetime
 streamlit
 st-gsheets-connection
-streamlit-gsheets
+#streamlit-gsheets
 streamlit-ext
 nswcaselaw
 openai
