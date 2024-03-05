@@ -669,7 +669,7 @@ def run(df_master):
             judgments_file.append(decision_v)
             counter +=1
     
-            time.sleep(scraper_pause)
+            pause.seconds(5)
             
         else:
             break
