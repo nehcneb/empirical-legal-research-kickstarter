@@ -21,16 +21,12 @@
 
 # %%
 #Preliminary modules
-import os
-import os.path 
-import json
 import pandas as pd
 import datetime
 from datetime import date
 from datetime import datetime
 from dateutil.relativedelta import *
 from datetime import datetime
-import time
 
 #Streamlit
 import streamlit as st
