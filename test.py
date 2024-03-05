@@ -18,15 +18,10 @@
 
 # %%
 #Preliminary modules
-import os
-import pickle 
-import os.path 
 import base64 
-import json
 import pandas as pd
 import shutil
 import requests
-from requests_html import HTMLSession
 import numpy as np
 from IPython.display import display
 import re
@@ -36,7 +31,6 @@ from datetime import datetime
 from dateutil import parser
 from dateutil.relativedelta import *
 from datetime import datetime, timedelta
-import time
 import sys
 import html2text
 import openpyxl
@@ -50,7 +44,6 @@ import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 from streamlit.components.v1 import html
 import streamlit_ext as ste
-
 
 #NSWCaseLaw
 from nswcaselaw.search import Search
@@ -492,12 +485,15 @@ def GPT_json_tokens(questions_json, judgment_json, API_key):
 #   return messages_for_GPT
 
             
-    os.environ["OPENAI_API_KEY"] = API_key
+    #os.environ["OPENAI_API_KEY"] = API_key
+
+    openai.api_key = API_key
     
-    client = OpenAI()
+    #client = OpenAI()
     
     try:
-        completion = client.chat.completions.create(
+        #completion = client.chat.completions.create(
+        completion = openai.chat.completions.create(
             model=GPT_model,
             messages=messages_for_GPT, 
             response_format={"type": "json_object"}
@@ -535,9 +531,11 @@ def engage_GPT_json_tokens(questions_json, df_individual, GPT_activation, API_ke
         # 'GPT time estimate (seconds)'
         # GPT questions/answers
 
-    os.environ["OPENAI_API_KEY"] = API_key
+    #os.environ["OPENAI_API_KEY"] = API_key
+
+    openai.api_key = API_key
     
-    client = OpenAI()
+    #client = OpenAI()
     
     question_keys = [*questions_json]
     
