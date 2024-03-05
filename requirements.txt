@@ -5,7 +5,6 @@ pydeck
 streamlit
 datetime
 streamlit
-streamlit.components.v1
 nswcaselaw
 openai
 tiktoken
