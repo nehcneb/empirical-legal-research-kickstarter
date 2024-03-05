@@ -64,7 +64,7 @@ import tiktoken
 
 # %%
 #Get current directory
-current_dir = os.getcwd()
+#current_dir = os.getcwd()
 
 # %%
 #today
