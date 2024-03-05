@@ -72,18 +72,6 @@ def convert_df_to_json(df):
 def convert_df_to_csv(df):
    return df.to_csv(index=False).encode('utf-8')
 
-def convert_df_to_excel(df):
-    output = BytesIO()
-    writer = pd.ExcelWriter(output, engine='xlsxwriter')
-    df.to_excel(writer, index=False, sheet_name='Sheet1')
-    workbook = writer.book
-    worksheet = writer.sheets['Sheet1']
-    format1 = workbook.add_format({'num_format': '0.00'}) 
-    worksheet.set_column('A:A', None, format1)  
-    writer.save()
-    processed_data = output.getvalue()
-    return processed_data
-
 
 
 # %% [markdown]
@@ -1065,14 +1053,6 @@ if run_button:
         output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + 'results'
 
 
-        excel_output = convert_df_to_excel(df_individual_output)
-
-        ste.download_button(
-            label="Download your results as Excel", 
-            data = excel_output,
-            file_name= output_name + '.xlsx', 
-        )
-
         csv_output = convert_df_to_csv(df_individual_output)
         
         ste.download_button(
@@ -1131,14 +1111,6 @@ if keep_button:
 #        conn.update(worksheet="Sheet1", data=df_to_update, )
 
         #Produce a file to download
-
-        excel = convert_df_to_excel(df_master)
-
-        ste.download_button(
-            label="Download as an Excel file", 
-            data = excel,
-            file_name= responses_output_name + '.xlsx', 
-        )
 
         csv = convert_df_to_csv(df_master)
         
