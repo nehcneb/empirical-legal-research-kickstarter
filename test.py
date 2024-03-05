@@ -31,6 +31,7 @@ from dateutil import parser
 from dateutil.relativedelta import *
 from datetime import datetime, timedelta
 import sys
+import pause
 
 #Streamlit
 import streamlit as st
@@ -72,7 +73,14 @@ def convert_df_to_json(df):
 def convert_df_to_csv(df):
    return df.to_csv(index=False).encode('utf-8')
 
-
+# %%
+#Title of webpage
+st.set_page_config(
+   page_title="Empirical Legal Research Kickstarter",
+   page_icon="🧊",
+   layout="wide",
+   initial_sidebar_state="expanded",
+)
 
 # %% [markdown]
 # # CaseLaw NSW functions and parameters
