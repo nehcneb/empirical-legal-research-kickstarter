@@ -3,29 +3,12 @@ numpy
 pandas
 pydeck
 streamlit
-#os
-pickle 
-#os.path 
-base64 
 json
 pandas
-shutil
-requests
-requests_html
-IPython.display
-re
 datetime
 time
-sys
-html2text
-openpyxl
-xlsxwriter
-openpyxl
-io
-pyxlsb
-streamlit
-streamlit_gsheets
+streamlit as st
 streamlit.components.v1
-nswcaselaw.search
-openai
+nswcaselaw.search import Search
+openai import OpenAI
 tiktoken
