@@ -796,12 +796,7 @@ def search_url(df_master):
     search_dict.update({'legislationCited': df_master.loc[0, 'Legislation cited']})
     search_dict.update({'casesCited': df_master.loc[0, 'Cases cited']})
     df_master.loc[0, 'SearchCriteria']=[search_dict]
-    
-    #Do search
-    
-    #Create judgments file
-    judgments_file = []
-    
+
     #Conduct search
     
     query = Search(courts=df_master.loc[0, 'New South Wales Courts to Cover'], 
