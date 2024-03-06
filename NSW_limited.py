@@ -881,6 +881,9 @@ For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/sear
     courts_entry = st.multiselect('You must select at least one court', nsw_courts)
     
     st.subheader("Your Search Terms")
+
+    catchwords_entry = st.text_input("Catchwords")
+    
     
     body_entry = st.text_input("Free text (searches the entire judgment)") 
     
@@ -889,8 +892,6 @@ For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/sear
     before_entry = st.text_input("Before")
 
     st.caption("Name of judge, commissioner, magistrate, member, registrar or assessor")
-    
-    catchwords_entry = st.text_input("Catchwords")
     
     party_entry = st.text_input("Party names")
     
