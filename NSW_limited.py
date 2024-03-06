@@ -697,7 +697,7 @@ def run(df_master):
     #Rename column titles
     
     try:
-        df_individual['Hyperlink (double click)'] = df_individual['uri'].apply(link)
+        df_individual['Hyperlink (click)'] = df_individual['uri'].apply(link)
         df_individual.pop('uri')
     except:
         pass
@@ -736,11 +736,11 @@ def remove_unwanted_columns(df_master, df_individual):
 
     old_columns = list(df_individual.columns)
     
-    for i in ['Case name', 'Medium neutral citation', 'Hyperlink (double click)']:
+    for i in ['Case name', 'Medium neutral citation', 'Hyperlink (click)']:
         if i in old_columns:
             old_columns.remove(i)
     
-    new_columns = ['Case name', 'Medium neutral citation', 'Hyperlink (double click)'] + old_columns
+    new_columns = ['Case name', 'Medium neutral citation', 'Hyperlink (click)'] + old_columns
     
     df_individual = df_individual.reindex(columns=new_columns)
 
@@ -748,7 +748,7 @@ def remove_unwanted_columns(df_master, df_individual):
     headnotes_exclude = []
     
     for x in headnotes_fields:
-        if ((x not in df_master.loc[0, "Information to Collect from Judgment Headnotes"]) &( x not in ['Case name', 'Medium neutral citation', 'Hyperlink (double click)'])):
+        if ((x not in df_master.loc[0, "Information to Collect from Judgment Headnotes"]) &( x not in ['Case name', 'Medium neutral citation', 'Hyperlink (click)'])):
             headnotes_exclude.append(x)
 
     #Remove unwanted columns
@@ -1066,7 +1066,7 @@ if run_button:
         csv_output = convert_df_to_csv(df_individual_output)
         
         ste.download_button(
-            label="Download your results as CSV", 
+            label="Download your results as a CSV (for use in Excel etc)", 
             data = csv_output,
             file_name= output_name + '.csv', 
             mime= "text/csv", 
@@ -1125,7 +1125,7 @@ if keep_button:
         csv = convert_df_to_csv(df_master)
         
         ste.download_button(
-            label="Download as a CSV", 
+            label="Download as a CSV (for use in Excel etc)", 
             data = csv,
             file_name=responses_output_name + '.csv', 
             mime= "text/csv", 
