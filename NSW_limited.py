@@ -426,7 +426,7 @@ def judgment_prompt_json(judgment_json):
 
         judgment_json["judgment"] = judgment_string_trimmed        
         
-        judgment_content_capped = "Based on the metadata and judgment in the following JSON: ***" + judgment_json["judgment"].replace("\\n\\n", '\n\n') + "***,"
+        judgment_content_capped = "Based on the metadata and judgment in the following JSON: " + judgment_json["judgment"].replace("\\n\\n", '\n\n') + ","
         
         return judgment_content_capped
 
