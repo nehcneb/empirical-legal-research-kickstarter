@@ -496,7 +496,12 @@ def GPT_json_tokens(questions_json, judgment_json, API_key):
         return [answers_dict, output_tokens, prompt_tokens]
 
     except Exception as error:
-        return str(error)
+        
+        for q_index in q_keys:
+            answers_json[q_index] = error
+        
+        return [answers_json, 0, 0]
+
 
 
 # %%
