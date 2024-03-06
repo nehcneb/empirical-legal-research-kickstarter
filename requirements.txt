@@ -13,3 +13,4 @@ openai
 tiktoken
 pause
 textract
+httplib2
