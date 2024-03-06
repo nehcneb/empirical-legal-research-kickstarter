@@ -779,8 +779,8 @@ def search_url(df_master):
      
     df_master['Information to Collect from Judgment Headnotes'] = df_master['Information to Collect from Judgment Headnotes'].apply(headnotes_choice)
     df_master['New South Wales Courts to Cover'] = df_master['New South Wales Courts to Cover'].apply(court_choice)
-    df_master['Enter your question(s) for GPT'] = df_master['Enter your question(s) for GPT'][0: answers_characters_bound].apply(split_by_line)
-    df_master['questions_json'] = df_master['Enter your question(s) for GPT'].apply(GPT_label_dict)
+    #df_master['Enter your question(s) for GPT'] = df_master['Enter your question(s) for GPT'][0: answers_characters_bound].apply(split_by_line)
+    #df_master['questions_json'] = df_master['Enter your question(s) for GPT'].apply(GPT_label_dict)
     
     #Combining catchwords into new column
     
