@@ -410,7 +410,7 @@ def judgment_prompt_json(judgment_json):
     
     judgment_json["judgment"] = judgment_to_string
     
-    judgment_content = "Based on the metadata and judgment in the following JSON: " + judgment_json["judgment"].replace("\\n\\n", '\n\n') + ", "
+    judgment_content = "Based on the metadata and judgment in the following JSON: " + str(judgment_json).replace("\\n\\n", '\n\n') + ", "
 
     if len(judgment_content) <= characters_limit_half*2:
         
@@ -426,7 +426,7 @@ def judgment_prompt_json(judgment_json):
 
         judgment_json["judgment"] = judgment_string_trimmed        
         
-        judgment_content_capped = "Based on the metadata and judgment in the following JSON: " + judgment_json["judgment"].replace("\\n\\n", '\n\n') + ","
+        judgment_content_capped = "Based on the metadata and judgment in the following JSON: " + str(judgment_json).replace("\\n\\n", '\n\n') + ","
         
         return judgment_content_capped
 
