@@ -658,7 +658,7 @@ def run(df_master):
                    fileNumber = df_master.loc[0, "SearchCriteria"]['fileNumber'], 
                    legislationCited  = df_master.loc[0, "SearchCriteria"]['legislationCited'], 
                    casesCited = df_master.loc[0, "SearchCriteria"]['legislationCited'],
-                   pause = scraper_pause
+                   pause = 0
                   )
     
     #Counter to limit search results to append
@@ -678,7 +678,7 @@ def run(df_master):
             judgments_file.append(decision_v)
             counter +=1
     
-            pause.seconds(5)
+            pause.seconds(scraper_pause)
             
         else:
             break
