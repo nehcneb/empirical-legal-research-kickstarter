@@ -1086,7 +1086,7 @@ The Federal Court pilot version can automatically
 
 (2) use GPT — a generative AI — as a research assistant to answer your questions about each judgment.
 
-**Complete this form to kickstart your project!**
+**Complete this form to kickstart your project :green[for free]!**
 """)
     st.caption('The Empirical Legal Research Kickstarter is the joint effort of Mike Lynch and Xinwei Luo of Sydney Informatics Hub and Ben Chen of Sydney Law School. It is partially funded by a University of Sydney Research Accelerator (SOAR) Prize awarded to Ben in 2022. Please send any enquiries to Ben at ben.chen@sydney.edu.au.')
 
@@ -1197,7 +1197,7 @@ If you do not agree, then please feel free to close this form. Any data or infor
 
     st.header("Next Steps")
 
-    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time to get your results is 10-20 seconds per judgment.
+    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time is about 2-3 minutes..
 
 You can also download a record of your responeses.
     

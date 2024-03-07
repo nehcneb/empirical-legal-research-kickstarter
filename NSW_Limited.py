@@ -12,7 +12,7 @@
 #     language: python
 #     name: python3
 # ---
-#
+
 # %%
 #streamlit run /Users/Ben/Library/CloudStorage/Dropbox/Python/OpenAI/GPT_self_contained/GPT_Streamlit_Google_Limited.py
 #
@@ -855,7 +855,7 @@ The NSW pilot version can automatically
 
 (3) use GPT — a generative AI — as a research assistant to answer your questions about each judgment.
 
-**Complete this form to kickstart your project!**
+**Complete this form to kickstart your project :green[for free]!**
 """)
     st.caption('The Empirical Legal Research Kickstarter is the joint effort of Mike Lynch and Xinwei Luo of Sydney Informatics Hub and Ben Chen of Sydney Law School. It is partially funded by a University of Sydney Research Accelerator (SOAR) Prize awarded to Ben in 2022. Please send any enquiries to Ben at ben.chen@sydney.edu.au.')
 
