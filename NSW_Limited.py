@@ -405,8 +405,11 @@ def num_tokens_from_string(string: str, encoding_name: str) -> int:
 characters_limit_half = int((16385*4)/2-1500)
 
 def judgment_prompt_json(judgment_json):
-        
-    judgment_to_string = " \n\n ".join(judgment_json["judgment"])
+
+    if type(judgment_json["judgment"]) == list:
+        judgment_to_string = " \n\n ".join(judgment_json["judgment"])
+    else:
+        judgment_to_string = judgment_json["judgment"]
     
     judgment_json["judgment"] = judgment_to_string
     
@@ -559,7 +562,7 @@ def engage_GPT_json_tokens(questions_json, df_individual, GPT_activation, API_ke
         #Depending on activation status, apply GPT_json function to each judgment, gives answers as a string containing a dictionary
 
         if int(GPT_activation) > 0:
-            GPT_output_list = GPT_json_tokens(questions_json, judgment_json, API_key) #Gives [answers as a json, output tokens, input tokens]
+            GPT_output_list = GPT_json_tokens(questions_json, judgment_json, API_key) #Gives [answers as a JSON, output tokens, input tokens]
             answers_dict = GPT_output_list[0]
         
         else:
