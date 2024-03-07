@@ -1284,7 +1284,7 @@ if run_button:
 
         df_individual = run(df_master)
 
-#        df_individual_output = remove_unwanted_columns(df_master, df_individual)
+        df_individual_output = remove_unwanted_columns(df_master, df_individual)
 
         #Keep record on Google sheet
         
@@ -1300,17 +1300,17 @@ if run_button:
         output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + 'results'
 
 
-        csv_output = convert_df_to_csv(df_individual)
+        csv_output = convert_df_to_csv(df_individual_output)
         
         ste.download_button(
-            label="Download your results as a CSV (for use in Excel etc)", 
+            label="Download your results as a CSV (for use in Excel ect)", 
             data = csv_output,
             file_name= output_name + '.csv', 
             mime= "text/csv", 
 #            key='download-csv'
         )
 
-        json_output = convert_df_to_json(df_individual)
+        json_output = convert_df_to_json(df_individual_output)
         
         ste.download_button(
             label="Download your results as a JSON", 
@@ -1318,6 +1318,7 @@ if run_button:
             file_name= output_name + '.json', 
             mime= "application/json", 
         )
+
 
 
 
