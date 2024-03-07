@@ -95,7 +95,7 @@ def convert_df_to_csv(df):
 # %%
 #Title of webpage
 st.set_page_config(
-   page_title="Empirical Legal Research Kickstarter",
+   page_title="The Empirical Legal Research Kickstarter",
    page_icon="🧊",
    layout="centered",
    initial_sidebar_state="collapsed",
@@ -1074,7 +1074,7 @@ def open_page(url):
 #Create form
 
 with st.form("GPT_input_form") as df_responses:
-    st.title("Empirical Legal Research Kickstarter")
+    st.title("The Empirical Legal Research Kickstarter")
     st.header("A Federal Court Pilot")
     
     st.markdown("""The Empirical Legal Research Kickstarter is a computer program designed to help kickstart empirical research involving judgments. It automates many costly, time-consuming and mundane tasks in empirical research.
