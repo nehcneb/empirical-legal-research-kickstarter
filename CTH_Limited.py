@@ -1197,7 +1197,7 @@ If you do not agree, then please feel free to close this form. Any data or infor
 
     st.header("Next Steps")
 
-    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time is about 2-3 minutes..
+    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time is about 2-3 minutes.
 
 You can also download a record of your responeses.
     
