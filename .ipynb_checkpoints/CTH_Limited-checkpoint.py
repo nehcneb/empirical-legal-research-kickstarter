@@ -1144,7 +1144,7 @@ For search tips, please visit the Federal Court Digital Law Library at https://w
     after_date_entry = st.date_input('After date', value = None, format="DD/MM/YYYY")
 
     st.caption('Relatively earlier judgments will not be collected if they are available in PDF only. For information about judgment availability, please visit https://www.fedcourt.gov.au/digital-law-library/judgments/judgments-faq.')
-
+    
     before_date_entry = st.date_input('Before date', value = None, format="DD/MM/YYYY")
     
     judgments_counter_bound_entry = judgments_counter_bound
