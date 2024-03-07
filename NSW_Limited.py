@@ -973,7 +973,7 @@ You may enter at most 1000 characters here.
 
     st.header("Next Steps")
 
-    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time to get your results is 10-20 seconds per judgment.
+    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time to get your results is 2-3 minutes.
 
 You can also download a record of your responeses.
     
