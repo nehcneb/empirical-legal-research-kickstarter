@@ -1068,7 +1068,7 @@ if run_button:
         csv_output = convert_df_to_csv(df_individual_output)
         
         ste.download_button(
-            label="Download your results as a CSV (for use in Excel ect)", 
+            label="Download your results as a CSV (for use in Excel etc)", 
             data = csv_output,
             file_name= output_name + '.csv', 
             mime= "text/csv", 
@@ -1127,7 +1127,7 @@ if keep_button:
         csv = convert_df_to_csv(df_master)
         
         ste.download_button(
-            label="Download as a CSV (for use in Excel ect)", 
+            label="Download as a CSV (for use in Excel etc)", 
             data = csv,
             file_name=responses_output_name + '.csv', 
             mime= "text/csv", 
