@@ -1200,7 +1200,7 @@ You may enter at most 1000 characters here.
 
     st.header("Next Steps")
 
-    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time is about 2-3 minutes.
+    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time to get your results is about 2-3 minutes.
 
 You can also download a record of your responeses.
     
@@ -1277,7 +1277,7 @@ if run_button:
 
     else:
 
-        st.write("Your results will be available for download soon. The estimated waiting time is about 2-3 minutes.")
+        st.write("Your results will be available for download soon. The estimated waiting time to get your results is about 2-3 minutes.")
 
         #Upload placeholder record onto Google sheet
         df_plaeceholdeer = pd.concat([df_google, df_master])
