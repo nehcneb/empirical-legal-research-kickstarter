@@ -1084,7 +1084,7 @@ The Federal Court pilot version can automatically
 
 (2) extract and code the judgment metadata; and
 
-(2) use GPT — a generative AI — as a research assistant to answer your questions about each judgment.
+(3) use GPT — a generative AI — as a research assistant to answer your questions about each judgment.
 
 **Complete this form to kickstart your project :green[for free]!**  The results of the above tasks will be available for download. 
 """)
@@ -1206,7 +1206,7 @@ You can also download a record of your responeses.
 
     run_button = st.form_submit_button('SUBMIT this form')
 
-    keep_button = st.form_submit_button('DOWNLOAD your responses')
+    keep_button = st.form_submit_button('DOWNLOAD your form responses')
 
 
 

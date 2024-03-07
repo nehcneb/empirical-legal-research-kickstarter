@@ -414,9 +414,9 @@ def judgment_prompt_json(judgment_json):
     else:
         judgment_to_string = judgment_json["judgment"]
     
-    judgment_json["judgment"] = judgment_to_string
+    judgment_json["judgment"] = judgment_to_string.replace("\\n", "\n")
     
-    judgment_content = "Based on the metadata and judgment in the following JSON: " + str(judgment_json).replace("\\n\\n", '\n\n') + ", "
+    judgment_content = "Based on the metadata and judgment in the following JSON: " + str(judgment_json) + ", "
 
     if len(judgment_content) <= characters_limit_half*2:
         
@@ -432,7 +432,7 @@ def judgment_prompt_json(judgment_json):
 
         judgment_json["judgment"] = judgment_string_trimmed        
         
-        judgment_content_capped = "Based on the metadata and judgment in the following JSON: " + str(judgment_json).replace("\\n\\n", '\n\n') + ","
+        judgment_content_capped = "Based on the metadata and judgment in the following JSON: " + str(judgment_json) + ","
         
         return judgment_content_capped
 
@@ -982,7 +982,7 @@ You can also download a record of your responeses.
 
     run_button = st.form_submit_button('SUBMIT this form')
 
-    keep_button = st.form_submit_button('DOWNLOAD your responses')
+    keep_button = st.form_submit_button('DOWNLOAD your form responses')
 
 
 
@@ -1042,7 +1042,7 @@ if run_button:
 
     else:
 
-        st.write("Your results will be available for download soon. The estimated waiting time to get your results is about 2-3 minutes.")
+        st.write("Your results will be available for download soon. The estimated waiting time is about 2-3 minutes.")
 
         #Upload placeholder record onto Google sheet
         df_plaeceholdeer = pd.concat([df_google, df_master])
