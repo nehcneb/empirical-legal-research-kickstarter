@@ -410,11 +410,11 @@ characters_limit_half = int((16385*4)/2-1500)
 def judgment_prompt_json(judgment_json):
 
 #    if type(judgment_json["judgment"]) == list:
-    judgment_to_string = " ".join(judgment_json["judgment"])
+#        judgment_to_string = " \n\n ".join(judgment_json["judgment"])
 #    else:
 #        judgment_to_string = judgment_json["judgment"]
     
-    judgment_json["judgment"] = judgment_to_string
+#    judgment_json["judgment"] = judgment_to_string.replace("\\n", "\n")
     
     judgment_content = 'Based on the metadata and judgment in the following JSON: """' + str(judgment_json) + '""",'
 
@@ -432,7 +432,7 @@ def judgment_prompt_json(judgment_json):
 
         judgment_json["judgment"] = judgment_string_trimmed        
         
-        judgment_content_capped = 'Based on the metadata and judgment in the following JSON: """' + str(judgment_json) + '""",'
+        judgment_content_capped = 'Based on the metadata and judgment in the following JSON: """' + str(judgment_json) + ','
         
         return judgment_content_capped
 
