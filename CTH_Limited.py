@@ -586,6 +586,12 @@ def meta_judgment_dict(judgment_url):
                  'Date.published' : '', 
                 'Judgment' : ''
                 }
+
+    
+    #Attach hyperlink
+
+    judgment_dict['Hyperlink'] = link(judgment_url)
+    
     page = requests.get(judgment_url)
     soup = BeautifulSoup(page.content, "lxml")
     meta_tags = soup.find_all("meta")
@@ -605,7 +611,6 @@ def meta_judgment_dict(judgment_url):
     except:
         pass
 
-    
     #Attach Judgment
 
     judgment_text = ''
@@ -619,10 +624,6 @@ def meta_judgment_dict(judgment_url):
         judgment_text = str(soup.get_text())
 
     judgment_dict['Judgment'] = judgment_text
-
-    #Attach hyperlink
-
-    judgment_dict['Hyperlink'] = link(judgment_url)
 
     #Check if gets taken to a PDF
 
