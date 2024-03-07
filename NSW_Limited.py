@@ -559,7 +559,7 @@ def engage_GPT_json_tokens(questions_json, df_individual, GPT_activation, API_ke
         #Depending on activation status, apply GPT_json function to each judgment, gives answers as a string containing a dictionary
 
         if int(GPT_activation) > 0:
-            GPT_output_list = GPT_json_tokens(questions_json, judgment_json, API_key) #Gives [answers as json, output tokens, input tokens]
+            GPT_output_list = GPT_json_tokens(questions_json, judgment_json, API_key) #Gives [answers as a json, output tokens, input tokens]
             answers_dict = GPT_output_list[0]
         
         else:
