@@ -1157,7 +1157,7 @@ For search tips, please visit the Federal Court Digital Law Library at https://w
     
     st.markdown("""Would you like to obtain judgment metadata? Such data include the name of the judge, the decision date and so on. 
     
-Case names and medium neutral citations are always included with your results.
+Case name and medium neutral citation are always included with your results.
 """)
     
     meta_data_entry = st.checkbox('Tick to include metadata in your results', value = False)
