@@ -558,7 +558,6 @@ def meta_dict(judgment_url):
 meta_labels = ['MNC', 'Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Distribution', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
 meta_labels_droppable = ['Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Distribution', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
 
-
 def meta_judgment_dict(judgment_url):
     judgment_dict = {'Case name': '',
                  'Medium neutral citation': '',
@@ -1243,7 +1242,7 @@ if run_button:
     #Obtain google spreadsheet
 
     conn = st.connection("gsheets", type=GSheetsConnection)
-    google_record_url = "https://docs.google.com/spreadsheets/d/1298kSJ5l8oZGVhjQIFlMQS-Out7i0AWfp5qy1dpWLpU/edit#gid=0"
+    google_record_url = "https://docs.google.com/spreadsheets/d/1Mlz_QyDl5fxoFiEgBXxqc2BOXJh8gognrBpr-4ML4_Q/edit#gid=0"
     df_google = conn.read(spreadsheet=google_record_url, worksheet = 'CTH')
     df_google = df_google.fillna('')
     df_google=df_google[df_google["Processed"]!='']
@@ -1324,19 +1323,6 @@ if keep_button:
 
 
     responses_output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + '_responses'
-
-#        st.write("A button for downloading your responses will appear very soon.")
-   
-    #Keep record on Google sheet
-#        conn = st.connection("gsheets", type=GSheetsConnection)
-#        google_record_url = "https://docs.google.com/spreadsheets/d/1298kSJ5l8oZGVhjQIFlMQS-Out7i0AWfp5qy1dpWLpU/edit#gid=0"
-#        df_google = conn.read(spreadsheet=google_record_url)
-#        df_google = df_google.fillna('')
-#        df_google=df_google[df_google["Processed"]!='']
-    
-#        df_to_update = pd.concat([df_google, df_master])
-    
-#        conn.update(worksheet="CTH", data=df_to_update, )
 
     #Produce a file to download
 
