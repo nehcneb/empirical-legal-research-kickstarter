@@ -969,15 +969,12 @@ You may enter at most 1000 characters here.
     
     consent =  st.checkbox('Yes, I agree.', value = False)
 
-    no_consent =  st.checkbox('No, I do not agree.', value = False)
-
     st.markdown("""If you do not agree, then please feel free to close this form. Any data or information this form provides will neither be received by Ben Chen nor be sent to GPT.
 """)
 
     st.header("Next Steps")
 
-    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time to get your results is 2-3 minutes.
-
+    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** A spreadsheet which hopefully has the data you seek will be available for download in about 2-3 minutes.
 You can also download a record of your responeses.
     
 """)
@@ -1106,6 +1103,8 @@ if keep_button:
     df_master = create_df()
 
     df_master.pop("Your GPT API key")
+
+    df_master.pop("Processed")
     
     if len(courts_entry) == 0:
         st.write('Please select at least one court.')

@@ -1193,15 +1193,12 @@ You may enter at most 1000 characters here.
     
     consent =  st.checkbox('Yes, I agree.', value = False)
 
-    no_consent =  st.checkbox('No, I do not agree.', value = False)
-
     st.markdown("""If you do not agree, then please feel free to close this form. Any data or information this form provides will neither be received by Ben Chen nor be sent to GPT.
 """)
 
     st.header("Next Steps")
 
-    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time to get your results is about 2-3 minutes.
-
+    st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** A spreadsheet which hopefully has the data you seek will be available for download in about 2-3 minutes.
 You can also download a record of your responeses.
     
 """)
@@ -1277,7 +1274,7 @@ if run_button:
 
     else:
 
-        st.write("Your results will be available for download soon. The estimated waiting time to get your results is about 2-3 minutes.")
+        st.write("Your results will be available for download soon. The estimated waiting time is about 2-3 minutes.")
 
         #Upload placeholder record onto Google sheet
         df_plaeceholdeer = pd.concat([df_google, df_master])
@@ -1336,6 +1333,7 @@ if keep_button:
 
     df_master.pop("Your GPT API key")
 
+    df_master.pop("Processed")
 
     responses_output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + '_responses'
 
