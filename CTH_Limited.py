@@ -1283,9 +1283,7 @@ if run_button:
 
         #Produce results
 
-        df_individual = run(df_master)
-
-        df_individual_output = remove_unwanted_columns(df_master, df_individual)
+        df_individual_output = run(df_master)
 
         #Keep record on Google sheet
         
@@ -1299,7 +1297,6 @@ if run_button:
         
         #Button for downloading results
         output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + 'results'
-
 
         csv_output = convert_df_to_csv(df_individual_output)
         
