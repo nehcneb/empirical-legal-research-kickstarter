@@ -1189,13 +1189,14 @@ You may enter at most 1000 characters here.
     st.header("Consent")
 
     st.markdown("""By submitting this form, you agree that the data and/or information this form provides will be temporarily stored on one or more of Ben Chen's electronic devices and/or one or more remote servers for the purpose of producing an output containing data in relation to judgments. Any such data and/or information may also be given to GPT for the same purpose should you choose to use GPT.
-
-If you do not agree, then please feel free to close this form. Any data or information this form provides will neither be received by Ben Chen nor be sent to GPT.
 """)
     
     consent =  st.checkbox('Yes, I agree.', value = False)
 
     no_consent =  st.checkbox('No, I do not agree.', value = False)
+
+    st.markdown("""If you do not agree, then please feel free to close this form. Any data or information this form provides will neither be received by Ben Chen nor be sent to GPT.
+""")
 
     st.header("Next Steps")
 
