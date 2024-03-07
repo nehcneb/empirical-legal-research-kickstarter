@@ -1154,7 +1154,7 @@ For search tips, please visit the Federal Court Digital Law Library at https://w
     
     preview_button = st.form_submit_button('Preview what you will find (in a popped up window)')
 
-    st.subheader("Judgment Metadata Collection")
+    st.subheader("Judgment metadata collection")
     
     st.markdown("""Would you like to obtain the judgment metadata? Such data include the name of the judge, the decision date and so on. 
     
