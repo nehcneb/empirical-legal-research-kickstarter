@@ -1254,8 +1254,8 @@ if run_button:
     #Obtain google spreadsheet
 
     conn = st.connection("gsheets", type=GSheetsConnection)
-    google_record_url = "https://docs.google.com/spreadsheets/d/1Mlz_QyDl5fxoFiEgBXxqc2BOXJh8gognrBpr-4ML4_Q/edit#gid=0"
-    df_google = conn.read(spreadsheet=google_record_url, worksheet = 'CTH')
+    google_record_url = "https://docs.google.com/spreadsheets/d/1Mlz_QyDl5fxoFiEgBXxqc2BOXJh8gognrBpr-4ML4_Q/edit#gid=1420440228"
+    df_google = conn.read(spreadsheet=google_record_url)
     df_google = df_google.fillna('')
     df_google=df_google[df_google["Processed"]!='']
 
@@ -1278,7 +1278,7 @@ if run_button:
 
         #Upload placeholder record onto Google sheet
         df_plaeceholdeer = pd.concat([df_google, df_master])
-        conn.update(worksheet="CTH", data=df_plaeceholdeer, )
+        conn.update(worksheet="Sheet1", data=df_plaeceholdeer, )
 
         #Produce results
 
@@ -1292,7 +1292,7 @@ if run_button:
         
         df_to_update = pd.concat([df_google, df_master])
         
-        conn.update(worksheet="CTH", data=df_to_update, )
+        conn.update(worksheet="Sheet1", data=df_to_update, )
 
         st.write("Your results are now available for download. Thank you for using the Empirical Legal Research Kickstarter.")
         
