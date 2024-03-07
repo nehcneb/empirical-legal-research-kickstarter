@@ -1106,8 +1106,6 @@ The Federal Court pilot version can automatically
     st.markdown("""This program will collect (ie scrape) the first 10 judgments satisfying your search terms.
 
 For search tips, please visit the Federal Court Digital Law Library at https://www.fedcourt.gov.au/digital-law-library/judgments/search. This section mimics their judgments search function.
-
-For information about judgment availability, please visit https://www.fedcourt.gov.au/digital-law-library/judgments/judgments-faq.
 """)
     st.caption('During the pilot stage, the number of judgments to scrape is capped. Please reach out to Ben at ben.chen@sydney.edu.au should you wish to cover more judgments, courts, or tribunals.')
     
@@ -1129,6 +1127,7 @@ For information about judgment availability, please visit https://www.fedcourt.g
 
     npa_entry = st.text_input('National practice area')
 
+    
     with_all_the_words_entry = st.text_input('With ALL the words')
 
     with_at_least_one_of_the_words_entry = st.text_input('With at least one of the words')
@@ -1142,6 +1141,8 @@ For information about judgment availability, please visit https://www.fedcourt.g
     on_this_date_entry = st.date_input('On this date', value = None, format="DD/MM/YYYY")
 
     after_date_entry = st.date_input('After date', value = None, format="DD/MM/YYYY")
+
+    st.caption('Relatively earlier judgments will not be collected if they are available in PDF only. For information about judgment availability, please visit https://www.fedcourt.gov.au/digital-law-library/judgments/judgments-faq.')
 
     before_date_entry = st.date_input('Before date', value = None, format="DD/MM/YYYY")
     
