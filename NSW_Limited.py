@@ -16,6 +16,9 @@
 # %%
 #streamlit run /Users/Ben/Library/CloudStorage/Dropbox/Python/OpenAI/GPT_self_contained/GPT_Streamlit_Google_Limited.py
 #
+# %% [markdown]
+# # Preliminaries
+
 # %%
 #Preliminary modules
 import base64 
@@ -77,7 +80,7 @@ def convert_df_to_csv(df):
 # %%
 #Title of webpage
 st.set_page_config(
-   page_title="The Empirical Legal Research Kickstarter (NSW)",
+   page_title="Empirical Legal Research Kickstarter (NSW)",
    page_icon="🧊",
    layout="centered",
    initial_sidebar_state="collapsed",
