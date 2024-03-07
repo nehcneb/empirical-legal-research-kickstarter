@@ -590,7 +590,7 @@ def meta_judgment_dict(judgment_url):
     
     #Attach hyperlink
 
-    judgment_dict['Hyperlink'] = link(judgment_url)
+    judgment_dict['Hyperlink (click)'] = link(judgment_url)
     
     page = requests.get(judgment_url)
     soup = BeautifulSoup(page.content, "lxml")
