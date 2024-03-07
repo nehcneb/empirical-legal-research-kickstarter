@@ -77,7 +77,7 @@ def convert_df_to_csv(df):
 # %%
 #Title of webpage
 st.set_page_config(
-   page_title="The Empirical Legal Research Kickstarter",
+   page_title="The Empirical Legal Research Kickstarter (NSW)",
    page_icon="🧊",
    layout="centered",
    initial_sidebar_state="collapsed",
