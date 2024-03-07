@@ -1195,6 +1195,8 @@ If you do not agree, then please feel free to close this form. Any data or infor
     
     consent =  st.checkbox('Yes, I agree.', value = False)
 
+    no_consent =  st.checkbox('No, I do not agree.', value = False)
+
     st.header("Next Steps")
 
     st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** The estimated waiting time is about 2-3 minutes.
