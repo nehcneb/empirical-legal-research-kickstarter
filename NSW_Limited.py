@@ -406,7 +406,7 @@ characters_limit_half = int((16385*4)/2-1500)
 
 def judgment_prompt_json(judgment_json):
         
-    judgment_to_string = " \n\n Paragraph ".join(judgment_json["judgment"])
+    judgment_to_string = " \n\n ".join(judgment_json["judgment"])
     
     judgment_json["judgment"] = judgment_to_string
     
@@ -884,7 +884,6 @@ For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/sear
 
     catchwords_entry = st.text_input("Catchwords")
     
-    
     body_entry = st.text_input("Free text (searches the entire judgment)") 
     
     title_entry = st.text_input("Case name")
@@ -1066,7 +1065,7 @@ if run_button:
         csv_output = convert_df_to_csv(df_individual_output)
         
         ste.download_button(
-            label="Download your results as a CSV (for use in Excel etc)", 
+            label="Download your results as a CSV (for use in Excel ect)", 
             data = csv_output,
             file_name= output_name + '.csv', 
             mime= "text/csv", 
@@ -1076,7 +1075,7 @@ if run_button:
         json_output = convert_df_to_json(df_individual_output)
         
         ste.download_button(
-            label="Download your results as JSON", 
+            label="Download your results as a JSON", 
             data = json_output,
             file_name= output_name + '.json', 
             mime= "application/json", 
@@ -1125,7 +1124,7 @@ if keep_button:
         csv = convert_df_to_csv(df_master)
         
         ste.download_button(
-            label="Download as a CSV (for use in Excel etc)", 
+            label="Download as a CSV (for use in Excel ect)", 
             data = csv,
             file_name=responses_output_name + '.csv', 
             mime= "text/csv", 
@@ -1140,4 +1139,3 @@ if keep_button:
             file_name= responses_output_name + '.json', 
             mime= "application/json", 
         )
-
