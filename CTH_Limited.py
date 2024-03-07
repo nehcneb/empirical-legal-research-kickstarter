@@ -730,7 +730,7 @@ tokens_cap = int(16385 - 1500)
 
 def judgment_prompt_json(judgment_json):
                 
-    judgment_content = "Based on the metadata and judgment in the following JSON: " + str(judgment_json) + ", "
+    judgment_content = 'Based on the metadata and judgment in the following JSON:  """'+ str(judgment_json) + '""",'
 
     judgment_content_tokens = num_tokens_from_string(judgment_content, "cl100k_base")
     
@@ -748,7 +748,7 @@ def judgment_prompt_json(judgment_json):
 
         judgment_json["Judgment"] = judgment_string_trimmed     
         
-        judgment_content_capped = "Based on the metadata and judgment in the following JSON: " + str(judgment_json) + ","
+        judgment_content_capped = 'Based on the metadata and judgment in the following JSON:  """'+ str(judgment_json) + '""",'
         
         return judgment_content_capped
 
