@@ -1156,7 +1156,7 @@ For search tips, please visit the Federal Court Digital Law Library at https://w
 
     st.header("Judgment Metadata Collection")
     
-    st.markdown("""Would you like to obtain the judgment metadata? Such data include the name of the judge, the decision date and so on. 
+    st.markdown("""Would you like to obtain judgment metadata? Such data include the name of the judge, the decision date and so on. 
     
 Case names and medium neutral citations are always included with your results.
 """)
