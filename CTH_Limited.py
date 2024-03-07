@@ -608,6 +608,8 @@ def meta_judgment_dict(judgment_url):
     
     #Attach Judgment
 
+    judgment_text = ''
+    
     try:
         judgment_removed_bottom = str(soup.get_text()).split('Translation Services')
         judgment_raw_no_bottom = judgment_removed_bottom[0]
@@ -618,7 +620,14 @@ def meta_judgment_dict(judgment_url):
 
     judgment_dict['Judgment'] = judgment_text
 
+    #Attach hyperlink
+
     judgment_dict['Hyperlink'] = link(judgment_url)
+
+    #Check if gets taken to a PDF
+
+    if '.pdf' in judgment_url.lower():
+        judgment_dict['Case name'] = 'Not working because the judgment is in PDF.'
     
     return judgment_dict
 
@@ -872,7 +881,7 @@ def engage_GPT_json_tokens(questions_json, df_individual, GPT_activation, API_ke
         #Depending on activation status, apply GPT_json function to each judgment, gives answers as a string containing a dictionary
 
         if int(GPT_activation) > 0:
-            GPT_output_list = GPT_json_tokens(questions_json, judgment_json, API_key) #Gives [answers as a json, output tokens, input tokens]
+            GPT_output_list = GPT_json_tokens(questions_json, judgment_json, API_key) #Gives [answers as a JSON, output tokens, input tokens]
             answers_dict = GPT_output_list[0]
         
         else:
