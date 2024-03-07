@@ -20,7 +20,7 @@
 # # Preliminaries
 
 # %%
-## Test test
+## Test
 #Preliminary modules
 import base64 
 import json
