@@ -12,10 +12,10 @@
 #     language: python
 #     name: python3
 # ---
-
+#
 # %%
 #streamlit run /Users/Ben/Library/CloudStorage/Dropbox/Python/OpenAI/GPT_self_contained/GPT_Streamlit_Google_Limited.py
-
+#
 # %%
 #Preliminary modules
 import base64 
