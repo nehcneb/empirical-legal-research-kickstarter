@@ -1106,6 +1106,8 @@ The Federal Court pilot version can automatically
     st.markdown("""This program will collect (ie scrape) the first 10 judgments satisfying your search terms.
 
 For search tips, please visit the Federal Court Digital Law Library at https://www.fedcourt.gov.au/digital-law-library/judgments/search. This section mimics their judgments search function.
+
+For information about judgment availability, please visit https://www.fedcourt.gov.au/digital-law-library/judgments/judgments-faq.
 """)
     st.caption('During the pilot stage, the number of judgments to scrape is capped. Please reach out to Ben at ben.chen@sydney.edu.au should you wish to cover more judgments, courts, or tribunals.')
     
