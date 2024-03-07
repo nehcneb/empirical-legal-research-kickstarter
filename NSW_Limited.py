@@ -412,7 +412,7 @@ def judgment_prompt_json(judgment_json):
 #    if type(judgment_json["judgment"]) == list:
 #        judgment_to_string = " \n\n ".join(judgment_json["judgment"])
 #    else:
-#        judgment_to_string = judgment_json["judgment"]
+    judgment_to_string = judgment_json["judgment"]
     
 #    judgment_json["judgment"] = judgment_to_string.replace("\\n", "\n")
     
