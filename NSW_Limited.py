@@ -1054,6 +1054,8 @@ if run_button:
         #Keep record on Google sheet
         
         df_master["Processed"] = datetime.now()
+
+        df_master.pop("Your GPT API key")
         
         df_to_update = pd.concat([df_google, df_master])
         
