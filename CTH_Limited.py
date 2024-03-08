@@ -516,8 +516,8 @@ def doc_link_to_dict(link_to_doc):
 # %%
 #Meta labels and judgment combined
 #IN USE
-meta_labels = ['MNC', 'Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Catchwords', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
-meta_labels_droppable = ['Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Catchwords', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
+meta_labels = ['MNC', 'Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Catchwords', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Sub_NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published', 'Appeal_to']
+meta_labels_droppable = ['Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Catchwords', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Sub_NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published', 'Appeal_to']
 
 def meta_judgment_dict(judgment_url):
     judgment_dict = {'Case name': '',
@@ -536,6 +536,7 @@ def meta_judgment_dict(judgment_url):
                  'Cases_Cited' : '',  
                  'Division' : '',  
                  'NPA' : '',  
+                'Sub_NPA' : '', 
                  'Pages' : '',  
                  'All_Parties' : '',  
                  'Jurisdiction' : '',  
@@ -545,6 +546,7 @@ def meta_judgment_dict(judgment_url):
                  'Parties' : '',  'FileName' : '',  
                  'Asset_ID' : '',  
                  'Date.published' : '', 
+                'Appeal_to' : '', 
                 'Header': '',
                 'Judgment' : ''
                 }
@@ -561,9 +563,10 @@ def meta_judgment_dict(judgment_url):
     #Attach meta tags
     if len(meta_tags)>0:
         for tag_index in range(len(meta_tags)):
-            for tag_name in meta_labels:
-                if tag_name in str(meta_tags[tag_index]):
-                    judgment_dict[tag_name] = meta_tags[tag_index].get("content")
+            meta_name = meta_tags[tag_index].get("name")
+            if meta_name in meta_labels:
+                meta_content = meta_tags[tag_index].get("content")
+                judgment_dict[meta_name] = meta_content
 
     try:
         judgment_dict['Case name'] = judgment_dict['MNC'].split('[')[0]
@@ -573,10 +576,10 @@ def meta_judgment_dict(judgment_url):
     except:
         pass
 
-    #Attach orders and judgment
+    #Attach header_text and judgment
 
     judgment_text = ''
-    orders = ''
+    header_text = ''
 
     try:
         judgment_raw = ''
@@ -589,13 +592,13 @@ def meta_judgment_dict(judgment_url):
         below_reasons_for_judgment = str(judgment_raw.split("REASONS FOR JUDGMENT")[1: ])
         
         if "ORDER MADE BY" in above_reasons_for_judgment:
-            orders = "ORDER MADE BY" + str(above_reasons_for_judgment.split("ORDER MADE BY")[1:])
+            header_text = "ORDER MADE BY" + str(above_reasons_for_judgment.split("ORDER MADE BY")[1:])
         
         elif "order made by" in above_reasons_for_judgment:
-            orders = "ORDER MADE BY" + str(above_reasons_for_judgment.split("order made by")[1:])
+            header_text = "ORDER MADE BY" + str(above_reasons_for_judgment.split("order made by")[1:])
         
         elif 'BETWEEN:' in above_reasons_for_judgment:
-            orders = "BETWEEN:" + str(above_reasons_for_judgment.split("BETWEEN:")[1:])
+            header_text = "BETWEEN:" + str(above_reasons_for_judgment.split("BETWEEN:")[1:])
 
 #        re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[0]
 #        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
@@ -607,11 +610,11 @@ def meta_judgment_dict(judgment_url):
         except:
             judgment_text = soup.get_text(strip=True)
 
-    if 'Entry of orders is' in orders:
-        orders = orders.split('Entry of orders is')[0]
+    if 'Entry of header_text is' in header_text:
+        header_text = header_text.split('Entry of header_text is')[0]
     
     judgment_dict['Judgment'] = judgment_text
-    judgment_dict['Header'] = orders
+    judgment_dict['Header'] = header_text.replace('Note:', '')
 
     #Check if gets taken to a PDF
 
@@ -1130,11 +1133,11 @@ For search tips, please visit the Federal Court Digital Law Library at https://w
     on_this_date_entry = st.date_input('On this date', value = None, format="DD/MM/YYYY")
 
     after_date_entry = st.date_input('After date', value = None, format="DD/MM/YYYY")
-
-    st.caption('Relatively earlier judgments will not be collected if they are available in PDF only. For information about judgment availability, please visit https://www.fedcourt.gov.au/digital-law-library/judgments/judgments-faq.')
     
     before_date_entry = st.date_input('Before date', value = None, format="DD/MM/YYYY")
-    
+
+    st.caption('Relatively earlier judgments will not be collected if they are available in PDF only. For information about judgment availability, please visit https://www.fedcourt.gov.au/digital-law-library/judgments/judgments-faq.')
+
     judgments_counter_bound_entry = judgments_counter_bound
 
     st.markdown("""You can preview your search results after you have entered some search terms.
@@ -1286,7 +1289,7 @@ if run_button:
         st.write("Your results are now available for download. Thank you for using the Empirical Legal Research Kickstarter.")
         
         #Button for downloading results
-        output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + 'results'
+        output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + '_results'
 
         csv_output = convert_df_to_csv(df_individual_output)
         

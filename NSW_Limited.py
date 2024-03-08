@@ -1070,7 +1070,7 @@ if run_button:
         st.write("Your results are now available for download. Thank you for using the Empirical Legal Research Kickstarter.")
         
         #Button for downloading results
-        output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + 'results'
+        output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + '_results'
 
 
         csv_output = convert_df_to_csv(df_individual_output)

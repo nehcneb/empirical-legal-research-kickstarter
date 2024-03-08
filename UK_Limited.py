@@ -273,7 +273,7 @@ def GPT_label_dict(x_list):
 
 #Tidy up hyperlink
 def link(x):
-    y =str(x)
+    y =str(x).replace('.uk/id', '.uk')
     value = '=HYPERLINK("' + y + '")'
     return value
 
@@ -330,8 +330,8 @@ def search_results_to_judgment_links(url_search_results, judgment_counter_bound)
     
     for link in hrefs:
         if ((counter <= judgment_counter_bound) and ('a href="/' in str(link)) and '">' in str(link) and '?' in str(link)):
-            link_direct = 'https://caselaw.nationalarchives.gov.uk' + str(link).split('?')[0][9:] + '/data.xml'.replace('.uk/id', '.uk')
-            links.append(link_direct)
+            link_direct = 'https://caselaw.nationalarchives.gov.uk' + str(link).split('?')[0][9:] + '/data.xml'
+            links.append(link_direct.replace('.uk/id', '.uk'))
             counter = counter + 1
     
     for ending in range(100):
@@ -345,8 +345,8 @@ def search_results_to_judgment_links(url_search_results, judgment_counter_bound)
                 hrefs_next_page = soup_judgment_next_page.find_all('a', href=True)
                 for extra_link in hrefs_next_page:
                     if ((counter <= judgment_counter_bound) and ('a href="/' in str(extra_link)) and '">' in str(extra_link) and '?' in str(extra_link)):
-                        extra_link_direct = 'https://caselaw.nationalarchives.gov.uk' + str(extra_link).split('?')[0][9:] + '/data.xml'.replace('.uk/id', '.uk')
-                        links.append(extra_link_direct)
+                        extra_link_direct = 'https://caselaw.nationalarchives.gov.uk' + str(extra_link).split('?')[0][9:] + '/data.xml'
+                        links.append(extra_link_direct.replace('.uk/id', '.uk'))
                         counter = counter + 1
             else:
                 break
@@ -378,7 +378,7 @@ def meta_judgment_dict(judgment_url):
         judgment_dict['Hyperlink (click)'] = link(soup.find("frbruri")['value'])
         judgment_dict['Date'] = soup.find("frbrdate")['date']
         judgment_dict['Court'] = soup.find("uk:court").getText()
-        judgment_dict['Header'] = soup.find('header').getText()
+        judgment_dict['Header'] = soup.find('header').getText().replace('\n\n', '\n')
         judgment_dict['Case number'] = soup.find("docketnumber").getText()
     except:
         pass
@@ -1057,7 +1057,7 @@ if run_button:
         st.write("Your results are now available for download. Thank you for using the Empirical Legal Research Kickstarter.")
         
         #Button for downloading results
-        output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + 'results'
+        output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + '_results'
 
         csv_output = convert_df_to_csv(df_individual_output)
         
