@@ -1019,8 +1019,9 @@ if run_button:
     #Obtain google spreadsheet
 
     conn = st.connection("gsheets_nsw", type=GSheetsConnection)
-    google_record_url = "https://docs.google.com/spreadsheets/d/1298kSJ5l8oZGVhjQIFlMQS-Out7i0AWfp5qy1dpWLpU/edit#gid=0"
+#    google_record_url = "https://docs.google.com/spreadsheets/d/1298kSJ5l8oZGVhjQIFlMQS-Out7i0AWfp5qy1dpWLpU/edit#gid=0"
 #    df_google = conn.read(spreadsheet=google_record_url)
+    df_google = conn.read()
     df_google = df_google.fillna('')
     df_google=df_google[df_google["Processed"]!='']
 
