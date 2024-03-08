@@ -41,6 +41,8 @@ from bs4 import BeautifulSoup, SoupStrainer
 import httplib2
 from urllib.request import urlretrieve
 import os
+import unicodedata
+import re
 
 #Streamlit
 import streamlit as st
@@ -340,14 +342,19 @@ def search_results_to_judgment_links(url_search_results, judgment_counter_bound)
             page_judgment_next_page = requests.get(url_next_page)
             soup_judgment_next_page = BeautifulSoup(page_judgment_next_page.content, "lxml")
             links_next_page_raw = soup_judgment_next_page.find_all("a", href=re.compile("fca"))
-            links_next_page = []
-            for i in links_next_page_raw:
-                if 'title=' in str(i):
-                    remove_title = str(i).split('" title=')[0]
-                    remove_leading_words = remove_title.replace('<a href="', '')
-                    if 'a class=' not in remove_leading_words:
-                        links.append(remove_leading_words)
-                        counter = counter + 1
+
+            #Check if stll more results
+            if len(links_next_page_raw) > 0:
+                for i in links_next_page_raw:
+                    if 'title=' in str(i):
+                        remove_title = str(i).split('" title=')[0]
+                        remove_leading_words = remove_title.replace('<a href="', '')
+                        if 'a class=' not in remove_leading_words:
+                            links.append(remove_leading_words)
+                            counter = counter + 1
+
+            else:
+                break
 
     return links
 
@@ -583,6 +590,7 @@ def meta_judgment_dict(judgment_url):
                  'Parties' : '',  'FileName' : '',  
                  'Asset_ID' : '',  
                  'Date.published' : '', 
+                'Orders': '',
                 'Judgment' : ''
                 }
 
@@ -610,19 +618,26 @@ def meta_judgment_dict(judgment_url):
     except:
         pass
 
-    #Attach Judgment
+    #Attach orders and judgment
 
     judgment_text = ''
-    
+    orders = ''
+
     try:
-        judgment_removed_bottom = str(soup.get_text()).split('Translation Services')
-        judgment_raw_no_bottom = judgment_removed_bottom[0]
-        judgment_raw_paras = judgment_raw_no_bottom.split('REASONS FOR JUDGMENT')
-        judgment_text = ''.join(judgment_raw_paras[1:])
+        judgment_raw = ''
+        judgment_raw = soup.find("div", {"class": "judgment_content"}).get_text(separator="\n", strip=True)
+        above_reasons_for_judgment = re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[0]
+        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
+        judgment_text = below_reasons_for_judgment
+        orders = "ORDER MADE BY" + re.split("ORDER MADE BY", above_reasons_for_judgment, flags=re.IGNORECASE)[1]
     except:
-        judgment_text = str(soup.get_text())
+        try:
+            judgment_text = soup.find("div", {"class": "judgment_content"}).get_text(separator="\n", strip=True)
+        except:
+            judgment_text = soup.get_text(strip=True)
 
     judgment_dict['Judgment'] = judgment_text
+    judgment_dict['Orders'] = orders
 
     #Check if gets taken to a PDF
 
@@ -1254,8 +1269,8 @@ if run_button:
 
     #Obtain google spreadsheet
 
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    google_record_url = "https://docs.google.com/spreadsheets/d/1Mlz_QyDl5fxoFiEgBXxqc2BOXJh8gognrBpr-4ML4_Q/edit#gid=1420440228"
+    conn = st.connection("gsheets_cth", type=GSheetsConnection)
+#    google_record_url = "https://docs.google.com/spreadsheets/d/1Mlz_QyDl5fxoFiEgBXxqc2BOXJh8gognrBpr-4ML4_Q/edit#gid=1420440228"
     df_google = conn.read(spreadsheet=google_record_url)
     df_google = df_google.fillna('')
     df_google=df_google[df_google["Processed"]!='']
@@ -1279,7 +1294,7 @@ if run_button:
 
         #Upload placeholder record onto Google sheet
         df_plaeceholdeer = pd.concat([df_google, df_master])
-        conn.update(worksheet="Sheet1", data=df_plaeceholdeer, )
+        conn.update(worksheet="CTH", data=df_plaeceholdeer, )
 
         #Produce results
 
@@ -1293,7 +1308,7 @@ if run_button:
         
         df_to_update = pd.concat([df_google, df_master])
         
-        conn.update(worksheet="Sheet1", data=df_to_update, )
+        conn.update(worksheet="CTH", data=df_to_update, )
 
         st.write("Your results are now available for download. Thank you for using the Empirical Legal Research Kickstarter.")
         
