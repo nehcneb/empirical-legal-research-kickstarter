@@ -609,12 +609,9 @@ def meta_judgment_dict(judgment_url):
             judgment_text = soup.find("div", {"class": "judgment_content"}).get_text(separator="\n", strip=True)
         except:
             judgment_text = soup.get_text(strip=True)
-
-    if 'Entry of header_text is' in header_text:
-        header_text = header_text.split('Entry of header_text is')[0]
     
     judgment_dict['Judgment'] = judgment_text
-    judgment_dict['Header'] = header_text.replace('Note:', '')
+    judgment_dict['Header'] = header_text
 
     #Check if gets taken to a PDF
 
