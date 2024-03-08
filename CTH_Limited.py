@@ -571,7 +571,7 @@ def meta_judgment_dict(judgment_url):
     try:
         judgment_dict['Case name'] = judgment_dict['MNC'].split('[')[0]
         judgment_dict['Medium neutral citation'] = '[' + judgment_dict['MNC'].split('[')[1]
-        judgment_dict.pop('MNC')
+        del judgment_dict['MNC']
 
     except:
         pass
