@@ -514,53 +514,10 @@ def doc_link_to_dict(link_to_doc):
 
 
 # %%
-#Meta labels
-#NOT IN USE, but works
-
-meta_labels = ['MNC', 'Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Distribution', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
-
-def meta_dict(judgment_url):
-    meta_dict = {'MNC' : '',  
-                 'Year' : '',  
-                 'Appeal' : '',  
-                 'File_Number' : '',  
-                 'Judge' : '',  
-                 'Judgment_Dated' : '',  
-                 'Distribution' : '',  
-                 'Subject' : '',  
-                 'Words_Phrases' : '',  
-                 'Legislation' : '',  
-                 'Cases_Cited' : '',  
-                 'Division' : '',  
-                 'NPA' : '',  
-                 'Pages' : '',  
-                 'All_Parties' : '',  
-                 'Jurisdiction' : '',  
-                 'Reported' : '',  
-                 'Summary' : '',  
-                 'Corrigenda' : '',  
-                 'Parties' : '',  'FileName' : '',  
-                 'Asset_ID' : '',  
-                 'Date.published' : ''
-                }
-    page = requests.get(judgment_url)
-    soup = BeautifulSoup(page.content, "lxml")
-    meta_tags = soup.find_all("meta")
-
-    if len(meta_tags)>0:
-        for tag_index in range(len(meta_tags)):
-            for tag_name in meta_labels:
-                if tag_name in str(meta_tags[tag_index]):
-                    meta_dict[tag_name] = meta_tags[tag_index].get("content")
-    return meta_dict
-
-    
-
-# %%
 #Meta labels and judgment combined
 #IN USE
-meta_labels = ['MNC', 'Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Distribution', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
-meta_labels_droppable = ['Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Distribution', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
+meta_labels = ['MNC', 'Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Catchwords', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
+meta_labels_droppable = ['Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Catchwords', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']
 
 def meta_judgment_dict(judgment_url):
     judgment_dict = {'Case name': '',
@@ -572,7 +529,7 @@ def meta_judgment_dict(judgment_url):
                  'File_Number' : '',  
                  'Judge' : '',  
                  'Judgment_Dated' : '',  
-                 'Distribution' : '',  
+                 'Catchwords' : '',  
                  'Subject' : '',  
                  'Words_Phrases' : '',  
                  'Legislation' : '',  
