@@ -1019,8 +1019,6 @@ if run_button:
     #Obtain google spreadsheet
 
     conn = st.connection("gsheets_nsw", type=GSheetsConnection)
-#    google_record_url = "https://docs.google.com/spreadsheets/d/1298kSJ5l8oZGVhjQIFlMQS-Out7i0AWfp5qy1dpWLpU/edit#gid=0"
-#    df_google = conn.read(spreadsheet=google_record_url)
     df_google = conn.read()
     df_google = df_google.fillna('')
     df_google=df_google[df_google["Processed"]!='']
@@ -1111,28 +1109,12 @@ if keep_button:
 
     df_master.pop("Processed")
     
-#    if len(courts_entry) == 0:
-#        st.write('Please select at least one court.')
-
     if search_terms_str(df_master) == 'NoneNone':
         st.write('Please enter at least one search term.')
 
     else:
 
         responses_output_name = df_master.loc[0, 'Your name'] + '_' + str(today_in_nums) + '_responses'
-
-#        st.write("A button for downloading your responses will appear very soon.")
-       
-        #Keep record on Google sheet
-#        conn = st.connection("gsheets", type=GSheetsConnection)
-#        google_record_url = "https://docs.google.com/spreadsheets/d/1298kSJ5l8oZGVhjQIFlMQS-Out7i0AWfp5qy1dpWLpU/edit#gid=0"
-#        df_google = conn.read(spreadsheet=google_record_url)
-#        df_google = df_google.fillna('')
-#        df_google=df_google[df_google["Processed"]!='']
-        
-#        df_to_update = pd.concat([df_google, df_master])
-        
-#        conn.update(worksheet="NSW", data=df_to_update, )
 
         #Produce a file to download
 
