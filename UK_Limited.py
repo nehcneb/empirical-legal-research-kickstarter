@@ -911,10 +911,10 @@ For search tips, please visit The National Archives at https://caselaw.nationala
     
     judgments_counter_bound_entry = judgments_counter_bound
 
-    st.markdown("""You can preview your search results after you have entered some search terms.
+    st.markdown("""You can preview the judgments returned by your search terms on the National Archives after you have entered some search terms.
     """)
     
-    preview_button = st.form_submit_button('Preview what judgments you will find (in a popped up window)')
+    preview_button = st.form_submit_button('Preview on the National Archives (in a popped up window)')
 
     st.header("Judgment Metadata Collection")
     
