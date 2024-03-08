@@ -1288,7 +1288,8 @@ if run_button:
 
     conn = st.connection("gsheets_cth", type=GSheetsConnection)
 #    google_record_url = "https://docs.google.com/spreadsheets/d/1Mlz_QyDl5fxoFiEgBXxqc2BOXJh8gognrBpr-4ML4_Q/edit#gid=1420440228"
-    df_google = conn.read(spreadsheet=google_record_url)
+#    df_google = conn.read(spreadsheet=google_record_url)
+    df_google = conn.read()
     df_google = df_google.fillna('')
     df_google=df_google[df_google["Processed"]!='']
 
