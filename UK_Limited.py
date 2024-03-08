@@ -357,8 +357,8 @@ def search_results_to_judgment_links(url_search_results, judgment_counter_bound)
 # %%
 #Meta labels and judgment combined
 
-def meta_judgment_dict(judgment_url):
-    page = requests.get(judgment_url)
+def meta_judgment_dict(judgment_url_xml):
+    page = requests.get(judgment_url_xml)
     soup = BeautifulSoup(page.content, "lxml")
     
     judgment_dict = {'Case name': '',
@@ -378,7 +378,9 @@ def meta_judgment_dict(judgment_url):
         judgment_dict['Hyperlink (click)'] = link(soup.find("frbruri")['value'])
         judgment_dict['Date'] = soup.find("frbrdate")['date']
         judgment_dict['Court'] = soup.find("uk:court").getText()
-        judgment_dict['Header'] = soup.find('header').getText().replace('\n\n', '\n')
+        judgment_dict['Header'] = soup.find('header').getText()
+        if judgment_dict['Header'][0:1] == '\n':
+            judgment_dict['Header'] = judgment_dict['Header'][1: ]
         judgment_dict['Case number'] = soup.find("docketnumber").getText()
     except:
         pass
@@ -395,7 +397,7 @@ def meta_judgment_dict(judgment_url):
 
     #Get judgment
 
-    htm_link = judgment_url.replace('/data.xml', '')
+    htm_link = judgment_url_xml.replace('/data.xml', '')
     page_html = requests.get(htm_link)
     soup_html = BeautifulSoup(page_html.content, "lxml")
     
