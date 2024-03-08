@@ -82,6 +82,21 @@ today_words = datetime.now().strftime('%A')
 # Generate placeholder list of errors
 errors_list = set()
 
+# %%
+
+#Upperbound on number of judgments to scrape
+
+judgments_counter_bound = 10
+
+print(f"\nNumber of judgments to scrape per request is capped at {judgments_counter_bound}.")
+
+#Pause between judgment scraping
+
+scraper_pause = 5
+
+print(f"\nThe pause between judgment scraping is {scraper_pause} second.")
+
+
 
 # %%
 #Create function for saving responses and results
@@ -99,6 +114,40 @@ st.set_page_config(
    layout="centered",
    initial_sidebar_state="collapsed",
 )
+
+
+# %% [markdown]
+# # Federal Courts search engine
+
+# %%
+#Define format functions for headnotes choice, courts choice, and GPT questions
+
+#Create function to split a string into a list by line
+def split_by_line(x):
+    y = x.split('\n')
+    for i in y:
+        if len(i) == 0:
+            y.remove(i)
+    return y
+
+#Create function to split a list into a dictionary for list items longer than 10 characters
+#Apply split_by_line() before the following function
+def GPT_label_dict(x_list):
+    GPT_dict = {}
+    for i in x_list:
+        if len(i) > 10:
+            GPT_index = x_list.index(i) + 1
+            i_label = 'GPT question ' + f'{GPT_index}'
+            GPT_dict.update({i_label: i})
+    return GPT_dict
+
+#Functions for tidying up
+
+#Tidy up hyperlink
+def link(x):
+    value = '=HYPERLINK("' + str(x) + '")'
+    return value
+
 
 
 # %%
@@ -224,40 +273,6 @@ def create_df():
 #        return 'Error: spreadsheet of reponses NOT generated.' 
 
 # %%
-#Define format functions for headnotes choice, courts choice, and GPT questions
-
-#Create function to split a string into a list by line
-def split_by_line(x):
-    y = x.split('\n')
-    for i in y:
-        if len(i) == 0:
-            y.remove(i)
-    return y
-
-#Create function to split a list into a dictionary for list items longer than 10 characters
-#Apply split_by_line() before the following function
-def GPT_label_dict(x_list):
-    GPT_dict = {}
-    for i in x_list:
-        if len(i) > 10:
-            GPT_index = x_list.index(i) + 1
-            i_label = 'GPT question ' + f'{GPT_index}'
-            GPT_dict.update({i_label: i})
-    return GPT_dict
-
-#Functions for tidying up
-
-#Tidy up hyperlink
-def link(x):
-    value = '=HYPERLINK("' + str(x) + '")'
-    return value
-
-
-
-# %% [markdown]
-# # Federal Courts search engine
-
-# %%
 #Function turning search terms to search results url
 def fca_search(case_name_mnc= '', 
                judge ='', 
@@ -372,148 +387,6 @@ def link_to_doc(url_judgment):
 
 
 # %%
-#Function for turning a link to judgment to a judgment dictonary
-#NOT IN USE Too many problems
-def link_to_judgment_dict(url_judgment):
-    page_judgment = requests.get(url_judgment)
-    soup_judgment = BeautifulSoup(page_judgment.content, "lxml")
-    
-    #Get meta data
-    meta_data_all = str(soup_judgment).split('REASONS FOR JUDGMENT')[0].replace('\\n', '\n\n')
-    
-    #Get Judgment
-
-    judgment_paras_text_only = []
-    
-    judgment_raw = str(soup_judgment).split('REASONS FOR JUDGMENT')[1]
-    
-    judgment_raw_paras = judgment_raw.split('order=')
-    
-    for para_text_raw in judgment_raw_paras:
-        para_text = ''.join(para_text_raw.split('">')[1:])
-        if len(para_text) > 0:
-            if para_text[0].isdigit():
-                para_text_clean = para_text.replace('</span>', '').replace('<span>', '').replace("\xa0", " ").replace('<span style="font:7.0pt &amp;quot;Times New Roman', "").replace('</p><p class="00806350', '')
-                judgment_paras_text_only.append(para_text_clean)
-    
-    judgment_paras_final = ' \n\n PARAGRAPH NUMBER '.join(judgment_paras_text_only)
-    
-    judgment_paras_finally_final = 'PARAGRAPH NUMBER '+ judgment_paras_final.replace('\\n', '\n\n')
-    
-    #Header
-    
-    #orders_very_raw = str(soup_judgment).split("DATE OF ORDER")[1].split("REASONS FOR JUDGMENT")[0]
-    #orders_list = []
-    #orders_raw_list = orders_raw.split('">')
-    #for i in orders_raw_list:
-    #    each_order = i.split('</p>')[0]
-    #    if len(each_order) > 3:
-    #        orders_list.append(each_order)
-    
-    #Convert to dict
-    
-    #orders_text_raw = 'Order number ' + ' Order number '.join(orders_list)
-    #orders_text=orders_text_raw.replace('   ',' ').replace('  ',' ')
-    #judgment_dict = {"metadata" : '', "orders" : '', "judgment" : ''}
-    judgment_dict = {"metadata" : '', "judgment" : ''}
-    
-    judgment_dict["metadata"] = meta_data_all
-    #judgment_dict["orders"] = orders_text
-    judgment_dict["judgment"] = judgment_paras_finally_final
-    
-    #judgment_json= json.dumps(judgment_dict)
-    return judgment_dict
-
-
-# %%
-#Convert html link to dictionary 
-#NOT IN USE Too many problems
-
-def link_to_dict(url_judgment):
-    page_judgment = requests.get(url_judgment)
-    soup_judgment = BeautifulSoup(page_judgment.content, "lxml")
-    text = soup_judgment.get_text()
-    judgment_dic = {'Hyperlink (click)': url_judgment, 'Judgment' : text}
-    
-    return judgment_dic
-
-
-
-# %%
-#Convert link to document to dictionary 
-#NOT IN USE
-
-def doc_link_to_dict(link_to_doc):
-
-    court_counter = 0
-    
-    if '.docx' in link_to_doc:
-
-        file_name_raw = link_to_doc.split('.docx')[0]
-
-        for j in ['fcafc', 'FCAFC', 'fca', 'FCA']:
-
-            if ((j in file_name_raw) and (court_counter <1)):
-    
-                file_name = file_name_raw.split(j)[0][-4:] + j + file_name_raw.split(j)[1] + '.docx'
-    
-                urlretrieve(link_to_doc, file_name)
-
-                file_loc = current_dir + '/' + file_name
-
-                text = textract.process(file_loc)
-
-                text_list = str(text).split("\\x")
-                
-                text_clean_list = []
-                
-                for x in text_list:
-                    if len(x)>2:
-                        x_clean = x[2:]
-                        text_clean_list.append(x_clean)
-                    
-                text_clean = ' '.join(text_clean_list).replace('\\n', '\n')
-
-                court_counter = court_counter +1
-    
-    elif '.pdf' in link_to_doc:
-
-        for k in ['fcafc', 'FCAFC', 'fca', 'FCA']:
-
-            if ((k in file_name_raw) and (court_counter <1)):
-
-                file_name = file_name_raw.split(k)[0][-4:] + k + file_name_raw.split(k)[1] + '.pdf'
-
-                urlretrieve(link_to_doc, file_name)
-
-                file_loc = current_dir + '/' + file_name
-
-                text = textract.process(file_loc)
-
-                text_list = str(text).split("\\x")
-                
-                text_clean_list = []
-                
-                for x in text_list:
-                    if len(x)>2:
-                        x_clean = x[2:]
-                        text_clean_list.append(x_clean)
-                    
-                text_clean = ' '.join(text_clean_list).replace('\\n', '\n')
-
-                court_counter = court_counter +1
-
-    else:
-        file_name = 'Not working'
-        text_clean = 'Not working'
-        
-    judgment_dic = {'File name' : file_name, 'Hyperlink (click)': link_to_doc, 'Judgment' : text_clean}
-    
-    return judgment_dic
-
-
-
-# %%
 #Meta labels and judgment combined
 #IN USE
 meta_labels = ['MNC', 'Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Catchwords', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Sub_NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published', 'Appeal_to']
@@ -589,29 +462,8 @@ def meta_judgment_dict(judgment_url):
 
         below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
 
-        order_text = "BETWEEEN:" + str(re.split("BETWEEN:", above_reasons_for_judgment, flags=re.IGNORECASE)[1:])[1:][:-1]
+        order_text = "BETWEEEN:" + str(re.split("BETWEEN:", above_reasons_for_judgment, flags=re.IGNORECASE)[1:])[2:][:-2]
 
-        #        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
-
-        
-        #above_reasons_for_judgment = judgment_raw.split("REASONS FOR JUDGMENT")[0]
-        #below_reasons_for_judgment = str(judgment_raw.split("REASONS FOR JUDGMENT")[1: ])
-        
-        #above_reasons_for_judgment = judgment_raw.split("REASONS FOR JUDGMENT")[0]
-        
-        #below_reasons_for_judgment = str(judgment_raw.split("REASONS FOR JUDGMENT")[1: ])
-        
-        #if "ORDER MADE BY" in above_reasons_for_judgment:
-            #order_text = "ORDER MADE BY" + str(above_reasons_for_judgment.split("ORDER MADE BY")[1:])
-        
-        #elif "order made by" in above_reasons_for_judgment:
-            #order_text = "ORDER MADE BY" + str(above_reasons_for_judgment.split("order made by")[1:])
-        
-        #elif 'BETWEEN:' in above_reasons_for_judgment:
-            #order_text = "BETWEEN:" + str(above_reasons_for_judgment.split("BETWEEN:")[1:])
-
-#        re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[0]
-#        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
         judgment_text = below_reasons_for_judgment
 
     except:
@@ -654,19 +506,6 @@ print(f"\nPrior number of GPT uses is capped at {GPT_use_bound} times.")
 answers_characters_bound = 1000
 
 print(f"\nQuestions for GPT are capped at {answers_characters_bound} characters.")
-
-#Upperbound on number of judgments to scrape
-
-judgments_counter_bound = 10
-
-print(f"\nNumber of judgments to scrape per request is capped at {judgments_counter_bound}.")
-
-#Pause between judgment scraping
-
-scraper_pause = 5
-
-print(f"\nThe pause between judgment scraping is {scraper_pause} second.")
-
 
 
 # %%
