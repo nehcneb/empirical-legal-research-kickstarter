@@ -100,6 +100,16 @@ st.set_page_config(
    initial_sidebar_state="collapsed",
 )
 
+# %%
+#Pause between judgment scraping
+
+scraper_pause = 5
+
+print(f"\nThe pause between judgment scraping is {scraper_pause} second.")
+
+
+# %% [markdown]
+# # UK Courts search engine
 
 # %%
 #function to create dataframe
@@ -279,9 +289,6 @@ def link(x):
 
 
 
-# %% [markdown]
-# # UK Courts search engine
-
 # %%
 #Function turning search terms to search results url
 def uk_search(query= '', 
@@ -397,8 +404,10 @@ def meta_judgment_dict(judgment_url_xml):
 
     #Get judgment
 
-    htm_link = judgment_url_xml.replace('/data.xml', '')
-    page_html = requests.get(htm_link)
+    pause.seconds(scraper_pause)
+
+    html_link = judgment_url_xml.replace('/data.xml', '')
+    page_html = requests.get(html_link)
     soup_html = BeautifulSoup(page_html.content, "lxml")
     
     judgment_text = soup_html.get_text(separator="\n", strip=True)
@@ -450,11 +459,6 @@ judgments_counter_bound = 10
 
 print(f"\nNumber of judgments to scrape per request is capped at {judgments_counter_bound}.")
 
-#Pause between judgment scraping
-
-scraper_pause = 5
-
-print(f"\nThe pause between judgment scraping is {scraper_pause} second.")
 
 
 
@@ -770,7 +774,7 @@ def run(df_master):
 #        judgments_all_info = { **meta_data, **judgment_dict}
 #        judgments_file.append(judgments_all_info)
         judgments_file.append(judgment_dict)
-        pause.seconds(5)
+        pause.seconds(scraper_pause)
     
     #Create and export json file with search results
     json_individual = json.dumps(judgments_file, indent=2)

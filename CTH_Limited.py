@@ -825,7 +825,7 @@ def run(df_master):
 #        judgments_all_info = { **meta_data, **judgment_dict}
 #        judgments_file.append(judgments_all_info)
         judgments_file.append(judgment_dict)
-        pause.seconds(5)
+        pause.seconds(scraper_pause)
     
     #Create and export json file with search results
     json_individual = json.dumps(judgments_file, indent=2)
