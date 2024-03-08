@@ -1189,7 +1189,7 @@ You may enter at most 1000 characters here.
 
     st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** A spreadsheet which hopefully has the data you seek will be available for download in about 2-3 minutes.
 
-You can also download a record of your responeses.
+You can also download a record of your responses.
     
 """)
 

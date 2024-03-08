@@ -247,6 +247,7 @@ def headnotes_choice(x):
 #nsw_courts.remove('All of the above Courts')
 
 #Create function to convert the string of chosen courts to a list; 13 = NSWSC, 3 = NSWCA, 4 = NSWCCA
+#For more, see https://github.com/Sydney-Informatics-Hub/nswcaselaw/blob/main/src/nswcaselaw/constants.py
 
 def court_choice(x):
     individual_choice = []
@@ -882,12 +883,11 @@ For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/sear
 """)
     st.caption('During the pilot stage, the number of judgments to scrape is capped. Please reach out to Ben at ben.chen@sydney.edu.au should you wish to Cover more judgments, courts, or tribunals.')
 
-
     st.subheader("New South Wales Courts to Cover")
 
     courts_entry = st.multiselect('Select the Courts to cover', nsw_courts)
 
-    st.caption("All Courts will be covered if left blank")
+    st.caption("All Courts listed in the above menu will be covered if left blank")
 
     st.subheader("Your Search Terms")
 
@@ -924,7 +924,7 @@ For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/sear
 
     judgments_counter_bound_entry = judgments_counter_bound
 
-    st.markdown("""You can preview your search results on CaseLaw NSW after you have selected a court and entered some search terms.
+    st.markdown("""You can preview your search results on CaseLaw NSW after you have entered some search terms.
     """)
     
     preview_button = st.form_submit_button('Preview what judgments you will find (in a popped up window)')
@@ -979,7 +979,7 @@ You may enter at most 1000 characters here.
 
     st.markdown("""**You can submit this form to run the Empirical Legal Research Kickstarter.** A spreadsheet which hopefully has the data you seek will be available for download in about 2-3 minutes.
 
-You can also download a record of your responeses.
+You can also download a record of your responses.
     
 """)
 
