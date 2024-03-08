@@ -547,7 +547,7 @@ def meta_judgment_dict(judgment_url):
                  'Asset_ID' : '',  
                  'Date.published' : '', 
                 'Appeal_to' : '', 
-                'Header': '',
+                'Order': '',
                 'Judgment' : ''
                 }
 
@@ -576,29 +576,39 @@ def meta_judgment_dict(judgment_url):
     except:
         pass
 
-    #Attach header_text and judgment
+    #Attach order_text and judgment
 
     judgment_text = ''
-    header_text = ''
+    order_text = ''
 
     try:
         judgment_raw = ''
         judgment_raw = soup.find("div", {"class": "judgment_content"}).get_text(separator="\n", strip=True)
-        above_reasons_for_judgment = judgment_raw.split("REASONS FOR JUDGMENT")[0]
-        below_reasons_for_judgment = str(judgment_raw.split("REASONS FOR JUDGMENT")[1: ])
+
+        above_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[0])
+
+        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
+
+        order_text = "BETWEEEN:" + str(re.split("BETWEEN:", above_reasons_for_judgment, flags=re.IGNORECASE)[1:])
+
+        #        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
+
         
-        above_reasons_for_judgment = judgment_raw.split("REASONS FOR JUDGMENT")[0]
+        #above_reasons_for_judgment = judgment_raw.split("REASONS FOR JUDGMENT")[0]
+        #below_reasons_for_judgment = str(judgment_raw.split("REASONS FOR JUDGMENT")[1: ])
         
-        below_reasons_for_judgment = str(judgment_raw.split("REASONS FOR JUDGMENT")[1: ])
+        #above_reasons_for_judgment = judgment_raw.split("REASONS FOR JUDGMENT")[0]
         
-        if "ORDER MADE BY" in above_reasons_for_judgment:
-            header_text = "ORDER MADE BY" + str(above_reasons_for_judgment.split("ORDER MADE BY")[1:])
+        #below_reasons_for_judgment = str(judgment_raw.split("REASONS FOR JUDGMENT")[1: ])
         
-        elif "order made by" in above_reasons_for_judgment:
-            header_text = "ORDER MADE BY" + str(above_reasons_for_judgment.split("order made by")[1:])
+        #if "ORDER MADE BY" in above_reasons_for_judgment:
+            #order_text = "ORDER MADE BY" + str(above_reasons_for_judgment.split("ORDER MADE BY")[1:])
         
-        elif 'BETWEEN:' in above_reasons_for_judgment:
-            header_text = "BETWEEN:" + str(above_reasons_for_judgment.split("BETWEEN:")[1:])
+        #elif "order made by" in above_reasons_for_judgment:
+            #order_text = "ORDER MADE BY" + str(above_reasons_for_judgment.split("order made by")[1:])
+        
+        #elif 'BETWEEN:' in above_reasons_for_judgment:
+            #order_text = "BETWEEN:" + str(above_reasons_for_judgment.split("BETWEEN:")[1:])
 
 #        re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[0]
 #        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
@@ -611,7 +621,7 @@ def meta_judgment_dict(judgment_url):
             judgment_text = soup.get_text(strip=True)
     
     judgment_dict['Judgment'] = judgment_text
-    judgment_dict['Header'] = header_text
+    judgment_dict['Order'] = order_text
 
     #Check if gets taken to a PDF
 
