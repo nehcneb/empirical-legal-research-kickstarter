@@ -41,8 +41,6 @@ from bs4 import BeautifulSoup, SoupStrainer
 import httplib2
 from urllib.request import urlretrieve
 import os
-import unicodedata
-import re
 
 #Streamlit
 import streamlit as st
@@ -626,10 +624,14 @@ def meta_judgment_dict(judgment_url):
     try:
         judgment_raw = ''
         judgment_raw = soup.find("div", {"class": "judgment_content"}).get_text(separator="\n", strip=True)
-        above_reasons_for_judgment = re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[0]
-        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
+        above_reasons_for_judgment = judgment_raw.split("REASONS FOR JUDGMENT")[0]
+        below_reasons_for_judgment = str(judgment_raw.split("REASONS FOR JUDGMENT")[1: ])
+        orders = "ORDER MADE BY" + str(above_reasons_for_judgment.split("ORDER MADE BY")[1:])
+        
+#        re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[0]
+#        below_reasons_for_judgment = str(re.split("REASONS FOR JUDGMENT", judgment_raw, flags=re.IGNORECASE)[1:])
         judgment_text = below_reasons_for_judgment
-        orders = "ORDER MADE BY" + re.split("ORDER MADE BY", above_reasons_for_judgment, flags=re.IGNORECASE)[1]
+
     except:
         try:
             judgment_text = soup.find("div", {"class": "judgment_content"}).get_text(separator="\n", strip=True)

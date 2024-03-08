@@ -14,4 +14,3 @@ tiktoken
 pause
 textract
 httplib2
-re

@@ -14,7 +14,7 @@
 # ---
 
 # %%
-#streamlit run Dropbox/Python/OpenAI/Streamlit/UK/UK_Limited.py
+#streamlit run Dropbox/Python/GitHub/empirical-legal-research-kickstarter/UK_Limited.py
 
 # %% [markdown]
 # # Preliminaries
