@@ -557,6 +557,13 @@ def meta_dict(judgment_url):
     
 
 # %%
+judgment_url = 'https://www.judgments.fedcourt.gov.au/judgments/Judgments/fca/full/2022/2022fcafc0168'
+dict = meta_judgment_dict(judgment_url)
+
+# %%
+dict['Orders']
+
+# %%
 #Meta labels and judgment combined
 #IN USE
 meta_labels = ['MNC', 'Year', 'Appeal', 'File_Number', 'Judge', 'Judgment_Dated', 'Distribution', 'Subject', 'Words_Phrases', 'Legislation', 'Cases_Cited', 'Division', 'NPA', 'Pages', 'All_Parties', 'Jurisdiction', 'Reported', 'Summary', 'Corrigenda', 'Parties', 'FileName', 'Asset_ID', 'Date.published']

@@ -1113,7 +1113,7 @@ if keep_button:
 #    if len(courts_entry) == 0:
 #        st.write('Please select at least one court.')
 
-    elif search_terms_str(df_master) == 'NoneNone':
+    if search_terms_str(df_master) == 'NoneNone':
         st.write('Please enter at least one search term.')
 
     else:
