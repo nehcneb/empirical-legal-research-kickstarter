@@ -927,7 +927,7 @@ For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/sear
     st.markdown("""You can preview the judgments returned by your search terms on CaseLaw NSW after you have entered some search terms.
     """)
     
-    preview_button = st.form_submit_button('Preview on CaseLaw NSW (in a popped up window)')
+    preview_button = st.form_submit_button('PREVIEW on CaseLaw NSW (in a popped up window)')
 
     
     st.subheader("Information to Collect from Judgment Headnotes")

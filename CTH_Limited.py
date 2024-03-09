@@ -989,7 +989,7 @@ For search tips, please visit the Federal Court Digital Law Library at https://w
     st.markdown("""You can preview the judgments returned by your search terms on the Federal Court Digital Law Library after you have entered some search terms.
     """)
     
-    preview_button = st.form_submit_button('Preview on the Federal Court Digital Law Library (in a popped up window)')
+    preview_button = st.form_submit_button('PREVIEW on the Federal Court Digital Law Library (in a popped up window)')
 
     st.header("Judgment Metadata Collection")
     
