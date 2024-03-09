@@ -877,7 +877,7 @@ The NSW pilot version can automatically
 
     st.header("Judgment Search Criteria")
     
-    st.markdown("""This program will collect (ie scrape) the first 10 judgments satisfying your search terms.
+    st.markdown("""This program will collect (ie scrape) the first 10 judgments returned by your search terms.
 
 For search tips, please visit CaseLaw NSW at https://www.caselaw.nsw.gov.au/search/advanced. This section mimics their Advance Search function.
 """)

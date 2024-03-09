@@ -941,7 +941,7 @@ The Federal Court pilot version can automatically
 
     st.header("Judgment Search Criteria")
     
-    st.markdown("""This program will collect (ie scrape) the first 10 judgments satisfying your search terms.
+    st.markdown("""This program will collect (ie scrape) the first 10 judgments returned by your search terms.
 
 For search tips, please visit the Federal Court Digital Law Library at https://www.fedcourt.gov.au/digital-law-library/judgments/search. This section mimics their judgments search function.
 """)
