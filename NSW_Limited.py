@@ -967,7 +967,7 @@ You may enter at most 1000 characters here.
 
     st.header("Consent")
 
-    st.markdown("""By submitting this form, you agree that the data and/or information this form provides will be temporarily stored on one or more of Ben Chen's electronic devices and/or one or more remote servers for the purpose of producing an output containing data in relation to judgments. Any such data and/or information may also be given to GPT for the same purpose should you choose to use GPT.
+    st.markdown("""By submitting this form to run the Empirical Legal Research Kickstarter, you agree that the data and/or information this form provides will be temporarily stored on one or more of Ben Chen's electronic devices and/or one or more remote servers for the purpose of producing an output containing data in relation to judgments. Any such data and/or information may also be given to GPT for the same purpose should you choose to use GPT.
 """)
     
     consent =  st.checkbox('Yes, I agree.', value = False)
@@ -983,7 +983,7 @@ You can also download a record of your responses.
     
 """)
 
-    run_button = st.form_submit_button('SUBMIT this form')
+    run_button = st.form_submit_button('RUN the Empirical Legal Research Kickstarter')
 
     keep_button = st.form_submit_button('DOWNLOAD your form responses')
 
